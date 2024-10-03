@@ -1,0 +1,37 @@
+.login{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+.form {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.5em;
+    label{
+        margin: 5%;
+    }
+    input{
+        padding: 5%;
+    }
+    button{
+        color: black;
+        text-decoration: none;
+        width: 100%;
+        height: 100%;     
+    }
+}
+.link{
+    text-align: center;
+    margin-top: 10%;
+    background-color: grey;
+    color: white;
+    display: flex;
+}
+
+.link :hover{
+    background-color: red
+}
+.link :active{
+    background-color: black;
+}
