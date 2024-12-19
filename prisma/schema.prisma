@@ -22,8 +22,10 @@ model User {
 }
 
 model familyImage {
-  email String @unique
-  url String
-  id Int @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  base64    String
+  name      String
+  firstName String
   createdAt DateTime @default(now())
 }

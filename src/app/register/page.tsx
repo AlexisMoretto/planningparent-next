@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 'use client'
 import './Register.scss'
 import { useState } from 'react'
@@ -26,21 +27,31 @@ export default function Register () {
         }
         
     }
+    const handleLogin = () => {
+        router.push('/login')
+    }
     
 
     return(
 
-        <div className='register'>
+        <div className='register'> 
+        <div className='registerTitle'>
+        <h1>Bienvenue sur planningParent</h1>
+        <p>L'application dédié à la gestion du quotidien en famille</p>
+        <p>Veuillez vous enregistrer</p>
+        </div>
             <form onSubmit={handleSubmit}>
-            <input type="text" placeholder='Nom' 
+                
+            <div className='formContainer'>
+            <input type="text" placeholder='Nom' required 
             onChange ={(event)=> {
                 setName(event.currentTarget.value)
             }}/>
-            <input type="text" placeholder='Prénom'
+            <input type="text" placeholder='Prénom' required
             onChange ={(event)=> {
                 setFirstname(event.currentTarget.value)
             }} />
-            <input type="email" placeholder="email"
+            <input type="email" placeholder="email" 
             onChange={(event) => {setEmail(event.target.value)}}
             required
             />
@@ -53,7 +64,13 @@ export default function Register () {
             <div className='submitButton'>
                     <button type='submit'>Valider</button>
                 </div>
+            <div className='loginButton'>
+                <p>Déjà un compte :</p>
+                <button onClick={handleLogin}>Se Connecter</button>
+                </div>    
+                </div>
                 </form>
+                
         </div>
     )
 }

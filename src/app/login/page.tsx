@@ -47,17 +47,17 @@ export default function Login() {
     return (
         <div className='login'>
             <div className='loginTitle'>
-            <h1>Bienvenue</h1>
+            <h1>Connexion</h1>
             </div>
             <div>
             <form  className='form'action="" onSubmit={handleSubmit}>
                 <label htmlFor="email">Email</label>
-                <input type="email" placeholder='E-mail'
+                <input type="email" placeholder='E-mail' required
                 onChange={(event) => {
                     setEmail(event.currentTarget.value)
                 }} />
                 <label htmlFor="">Mot de passe</label>
-                <input type="password" placeholder='Mot de passe'
+                <input type="password" placeholder='Mot de passe' required
                 onChange={(event) => {
                     setPassword(event.currentTarget.value)                    
                 }} />

@@ -8,11 +8,11 @@ const prisma = new PrismaClient();
 export async function POST(req: NextRequest, res: NextResponse) {
   if (req.method === 'POST') {
     try {
-    const { email, password, name, prenom } : {email:string, password: string, name: string, prenom: string} = await req.json()
+    const { email, password, nom, prenom } : {email:string, password: string, nom: string, prenom: string} = await req.json()
 
     //Vérifier si l'email et le password sont fourni
 
-    if (!email || !password || !name|| !prenom) {
+    if (!email || !password || !nom|| !prenom) {
         return NextResponse.json({message : "Elément manquant"})
     } 
     // Fonction asynchrone pour générer le salt et le mdp
@@ -21,7 +21,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
       const newUser = await prisma.user.create({
         data: {
-          nom: name,
+          nom: nom,
           prenom: prenom,
           email: email,
           password: hashedPassword          

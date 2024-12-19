@@ -3,7 +3,7 @@ import { ACTIONS, User } from "../@types";
 
 
 const userInitialState: User = {
-    name: 'name de l\'initialState',
+    nom: 'name de l\'initialState',
     password: '',
     email: '',
     id: 0,
@@ -14,7 +14,7 @@ const userInitialState: User = {
 const userReducer = (state = userInitialState, action: {
   type: ACTIONS;
   payload: {
-    name: string;
+    nom: string;
     prenom: string;
     email: string
   }
@@ -26,12 +26,14 @@ const userReducer = (state = userInitialState, action: {
     // On crée un nouveau state dans lequel on deverse le state actuel et on modifie les valeurs en fonction de la réponse API
     return {
       ...state,      
-        name: action.payload.name,
+        nom: action.payload.nom,
         prenom: action.payload.prenom,
         email: action.payload.email,
     }
   }
       // La valeur que le reducer return est automatiquement placé dans le state du store
+      console.log('UserState', state);
+      
     return state;
   }
 export default userReducer

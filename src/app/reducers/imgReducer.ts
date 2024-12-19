@@ -1,20 +1,33 @@
+import { emit } from "process";
 import { ACTIONS, Img } from "../@types";
 
 const imgInitialState: Img = {
-    url: '',
+    base64: '',
+    name: '',
+    firstName:'',
+    email:','
+
 }
+
+
 
 export const imgReducer = (state = imgInitialState, action : {
     type: ACTIONS;
     payload: {
-        url: string;
+        name: string
+        firstName: string;
+        email: string
+        base64: string
     }
 }) => {
     
     if (action.type === ACTIONS.CHANGE_IMAGE) {
         return {
             ...state,
-            url: action.payload.url,
+            firstName: action.payload.firstName,
+            base64: action.payload.base64,
+            email: action.payload.email,
+            name: action.payload.name
             
         }       
     }

@@ -1,5 +1,5 @@
 export interface User {
-    name: string;
+    nom: string;
     password: string;
     email: string;
     id: number;
@@ -7,7 +7,10 @@ export interface User {
     prenom:string
   }
 export interface Img {
-    url: string,
+  firstName: string,
+  name: string,
+  email: string
+  base64: string
 }
 
 export enum ACTIONS {
