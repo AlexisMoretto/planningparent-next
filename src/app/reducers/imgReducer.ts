@@ -1,11 +1,15 @@
 import { emit } from "process";
-import { ACTIONS, Img } from "../@types";
+import { ACTIONS } from "../@types";
+import { familyImage } from "@prisma/client";
 
-const imgInitialState: Img = {
+const imgInitialState: familyImage = {
     base64: '',
     name: '',
     firstName:'',
-    email:','
+    email:'',
+    mimeType: '',
+    createdAt: new Date ,
+    id: 0,
 
 }
 
@@ -18,6 +22,7 @@ export const imgReducer = (state = imgInitialState, action : {
         firstName: string;
         email: string
         base64: string
+        mimeType: string
     }
 }) => {
     
@@ -27,11 +32,11 @@ export const imgReducer = (state = imgInitialState, action : {
             firstName: action.payload.firstName,
             base64: action.payload.base64,
             email: action.payload.email,
-            name: action.payload.name
+            name: action.payload.name,
+            mimeType: action.payload.mimeType,
             
         }       
     }
-    console.log("imgState", state);
     return state;
     
 }

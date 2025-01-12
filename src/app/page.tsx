@@ -4,6 +4,10 @@ import Register from './register/page';
 import Home from './home/page';
 import { useState } from 'react';
 import { userStore } from './store/store';
+import AddMember from './addMember/page';
+import Budget from './budget/page';
+import Shopping from './shopping/page';
+import Meal from './meal/page';
 
 
 export default function Main({children} : { children: React.ReactNode }) {
@@ -25,6 +29,11 @@ export default function Main({children} : { children: React.ReactNode }) {
           <div >
         <Login/>
         <Home/>
+        <AddMember/>
+        <Budget/>
+        <Shopping/>
+        <Meal/>
+
         </div>) : ''}
         
         

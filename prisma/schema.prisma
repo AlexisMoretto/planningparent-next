@@ -15,17 +15,28 @@ datasource db {
 
 model User {
   id       Int      @id @default(autoincrement())
-  nom      String
-  prenom   String
+  name      String
+  firstName   String
   email    String   @unique
   password String 
 }
 
 model familyImage {
   id        Int      @id @default(autoincrement())
-  email     String   @unique
-  base64    String
+  email     String 
+  base64    String  @db.LongText
   name      String
   firstName String
+  mimeType String 
   createdAt DateTime @default(now())
+}
+model Expense {
+  id        Int      @id @default(autoincrement())
+  reason String
+  expense Int
+  email String
+}
+model Budget {
+  budget Int
+  email String @unique
 }

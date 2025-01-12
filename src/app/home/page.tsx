@@ -2,91 +2,18 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import './Home.scss';
-import { useState, FormEventHandler, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { imgStore, userStore } from '../store/store';
-import { Img } from '../@types';
-import type { PutBlobResult } from '@vercel/blob';
-import { blob } from 'stream/consumers';
-import { NextResponse } from 'next/server';
-import { getActionChangeImgData } from '../actions/actions';
-import { resolve } from 'path';
-import { rejects } from 'assert';
-import { headers } from 'next/headers';
-
-
+import { useEffect } from 'react';
+import { familyImage } from '@prisma/client';
 
 export default function Home() {
 
-  const inputFileRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const userData = userStore.getState()
   const imageData = imgStore.getState()
-
-  // Encoder l'image en base64
-
-  const uploadImage: FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault();
   
-    // Vérification qu'un fichier est sélectionné
-    if (!inputFileRef.current?.files) {
-      throw new Error("No file selected");
-    }
-  
-    const file = inputFileRef.current.files[0];
-    console.log('File',file);
-    
-  
-    try {
-      // Fonction pour encoder l'image en Base64
-      const encodeImageToBase64 = (file: File): Promise<string> => {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-  
-          reader.onload = () => {
-            const result = reader.result as string;
-            // Supprime le préfixe 'data:image/jpeg;base64,'
-            resolve(result.split(",")[1]); 
-          };
-  
-          reader.onerror = (error) => {
-            reject(error);
-          };
-  
-          reader.readAsDataURL(file);
-        });
-      };
-  
-      // Encoder l'image en Base64
-      const base64Image = await encodeImageToBase64(file);
-      console.log('base64Image',base64Image);
-      
-  
-      // Données supplémentaires pour Prisma
-      const email = userData.email
-      const name = userData.nom
-      const firstName = userData.prenom
-      console.log("Userdata a envoyer avec le file",email, name, firstName);
-      
-      
-      // Maintenant qu'on a toutes nos Info on envoi a l'API
-      const response = await axios.post("/api/upload", {
-        email,
-        base64: base64Image,
-        name,
-        firstName,
-      });
-  
-      const data = await response.data;
-      console.log("Réponse du backend :", data);
-    } catch (error) {
-      console.error("Erreur :", error);
-    }
-  };
-   const actionChangeImageData = getActionChangeImgData(imageData)
-   imgStore.dispatch(actionChangeImageData)   
-
 
   const verifyoken = async (token: any) => {
     try {
@@ -109,22 +36,104 @@ export default function Home() {
       router.push('/login');
     }
   }; 
+  const fetchImages = async () => {
+    // Vider le contenu de la div principale
+    const membersContainer = document.querySelector('.membersContainer') as HTMLElement;
+    if (membersContainer) {
+      membersContainer.innerHTML = '';
+    } else {
+      console.error('La div .membersContainer est introuvable dans le DOM');
+      return;
+    }
+  
+    try {
+      const response: { data: familyImage[] } = await axios.get('/api/downloadImage', {
+        params: { email: userData.email },
+      });
+  
+      const imagesFromBDD = response.data as familyImage[];
+      console.log("Réponse de l'API stockée dans imagesFromBDD", imagesFromBDD);
+  
+      // Créer une div par membre et ajouter le contenu
+      imagesFromBDD.forEach((imageFromBDD: familyImage) => {
+        // Conteneur parent pour chaque membre
+        const memberDiv = document.createElement('div') as HTMLElement;
+        memberDiv.classList.add('member');
+  
+        
+        const imgButton = document.createElement('button') as HTMLButtonElement;
+        imgButton.classList.add('imgButton');
+        imgButton.type = 'button'; // Type bouton pour éviter le comportement par défaut
+  
+        const imgElement = document.createElement('img');
+        imgElement.src = imageFromBDD.base64;
+        imgElement.alt = `${imageFromBDD.firstName} ${imageFromBDD.name}`;
+  
+        // Ajouter une action au clic sur le bouton
+        imgButton.onclick = () => {
+          alert(`Vous avez cliqué sur ${imageFromBDD.firstName} ${imageFromBDD.name}`);
+        };
+  
+        // Ajouter l'image au bouton
+        imgButton.appendChild(imgElement);
+  
+        // Nom complet
+        const nameElement = document.createElement('h2');
+        nameElement.textContent = `${imageFromBDD.firstName} ${imageFromBDD.name}`;
+  
+        // Ajouter le bouton et le nom dans le conteneur membre
+        memberDiv.appendChild(imgButton);
+        memberDiv.appendChild(nameElement);
+  
+        // Ajouter le conteneur du membre dans la div principale
+        membersContainer.appendChild(memberDiv);
+      });
+    } catch (error) {
+      console.error("Erreur lors de la récupération des images :", error);
+    }
+  };
+  
+  
+console.log('userData du premier rendu', userData);
+
+  // Route de la navBarre
+    
+  const addMember = () => {
+    router.push('/addMember')
+  }
+  const goToBudget = () => {
+    router.push('/budget')
+  }
+  const goToShopping = () => {
+    router.push('/shopping')
+  }
+  const goToMeal = () => {
+    router.push('/meal')
+  }
+  const goToMeeting = () => {
+    router.push('/meeting')
+  }  
+  useEffect(()=> {
+    fetchImages()
+  }),[]
   
   return (
     <div className="home">
-      <h1>Famille de {userData.nom} </h1>
+      <div className='navBarre'>
+      <button className='addMember' type='button' onClick={addMember}>Ajouter un proche</button>
+      <button className='addMember' type='button' onClick={goToBudget}>Budget</button>
+      <button className='addMember' type='button' onClick={goToShopping}>Course</button>
+      <button className='addMember' type='button' onClick={goToMeal}>Repas</button>
+      <button className='addMember' type='button' onClick={goToMeeting}>Rendez-vous</button>
+      <button onClick={fetchImages}>FetchImages</button>
+      </div>
+      <div className='title'><h1>Famille de {userData.name} </h1></div>
       <div className='allTree'>
         <div className='titleTree'>
         <h2>Membre de la famille</h2>
         </div>
         <div className='tree'>
-          <form onSubmit={uploadImage}>
-            <input type="file" ref={inputFileRef} name='file' required />
-            <button type='submit'>Upload</button>
-          </form>
-          {/* affichage de l'image conditionnel */}
-          {imageData.base64 ? (<img src={imageData.base64} alt='' />)  : "Pas d'url"}
-          
+        <div className='membersContainer'></div>
         </div>
       </div>
     </div>  

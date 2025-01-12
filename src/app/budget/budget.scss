@@ -1,0 +1,72 @@
+.title {
+    text-align: center;
+}
+.projectedExpense{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width:100%;    
+}
+.projectedBudget{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width:100%;
+}
+.total{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width:100%;
+}
+.showButtonAmount{
+    display: flex;
+    justify-content: center;
+    align-items: center;    
+}
+
+.checkImage{
+    width: 100%;
+    height: auto;
+}
+.checkButton{
+    width: 10vw;
+    height: 10vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.crossImage{
+    width: 100%;
+    height: auto;
+}
+.showButtonAmountContainer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.done{
+    width: 5vw;
+    height: auto;
+    object-fit: contain;
+    border: none;
+    border-radius: 100%;
+}
+.done img:hover{
+    transform: scale(1.1);
+}
+.showButtonExpense{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.expenseContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

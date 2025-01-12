@@ -4,13 +4,16 @@ import './Register.scss'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import axios from 'axios'
+import { getActionChangeUserData } from '../actions/actions'
+import { userStore } from '../store/store'
+import { User } from '../@types'
 
 export default function Register () {
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [name, setName] = useState('')
-    const [firstname, setFirstname] = useState('')
+    const [firstName, setFirstName] = useState('')
 
     const router = useRouter();
 
@@ -19,9 +22,19 @@ export default function Register () {
 
         try {
             
-            const response = await axios.post('/api/register', {email, password, name, firstname})
-            router.push('/home')
+            const response = await axios.post('/api/register', {email, password, name, firstName} as User)
 
+            // Vérification d'envoie
+
+            if (!email || !password || !name || !firstName) {
+                alert('Tous les champs sont requis');
+                return;
+              }              
+            const actionChangeUserData = getActionChangeUserData(response.data as User)
+            userStore.dispatch(actionChangeUserData)
+            console.log('Response.data',response.data);
+            
+            router.push('/home')
             
         } catch (error) { console.error('Registration Failed', error);
         }
@@ -49,13 +62,13 @@ export default function Register () {
             }}/>
             <input type="text" placeholder='Prénom' required
             onChange ={(event)=> {
-                setFirstname(event.currentTarget.value)
+                setFirstName(event.currentTarget.value)
             }} />
             <input type="email" placeholder="email" 
             onChange={(event) => {setEmail(event.target.value)}}
             required
             />
-            <input type="text" placeholder="password" 
+            <input type="password" placeholder="password" 
             onChange={(event) => {
                 setPassword(event.currentTarget.value)                    
             }}

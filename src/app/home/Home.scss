@@ -1,3 +1,52 @@
-.home {
+.membersContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  .member {
+    width: 150px;
     text-align: center;
-}
+  }
+  
+  .imgButton {
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+  }
+  
+  .imgButton img {
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .imgButton img:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .member h2 {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #333;
+  }
+  .home{
+    text-align: center;
+  }
+  .navBarre{
+    text-align: center;
+    display: flex;
+    justify-content: space-around;
+  }
+  .navBarre button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  .addMember{
+    width: 100%;
+    margin-left: 5%;
+  }

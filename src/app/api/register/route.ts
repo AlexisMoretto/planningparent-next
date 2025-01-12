@@ -8,11 +8,10 @@ const prisma = new PrismaClient();
 export async function POST(req: NextRequest, res: NextResponse) {
   if (req.method === 'POST') {
     try {
-    const { email, password, nom, prenom } : {email:string, password: string, nom: string, prenom: string} = await req.json()
-
+    const { email, password, name, firstName } : {email:string, password: string, name: string, firstName: string} = await req.json()
     //Vérifier si l'email et le password sont fourni
 
-    if (!email || !password || !nom|| !prenom) {
+    if (!email || !password || !name|| !firstName) {
         return NextResponse.json({message : "Elément manquant"})
     } 
     // Fonction asynchrone pour générer le salt et le mdp
@@ -21,14 +20,15 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
       const newUser = await prisma.user.create({
         data: {
-          nom: nom,
-          prenom: prenom,
+          name: name,
+          firstName: firstName,
           email: email,
           password: hashedPassword          
         },
       });
       return NextResponse.json(newUser, {status: 201});
     } catch (error: any) {
+      console.error('Prisma error:', error);
       return NextResponse.json({ message: 'User creation failed', error: error.message }, {status: 500});
     }
   } else {
