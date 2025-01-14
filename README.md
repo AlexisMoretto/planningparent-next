@@ -20,3 +20,4 @@ Si vous rencontrez des problèmes n'hésitez pas a me contacter par mail: <alexi
 Cette application est bien évidemment en developpement. C'est donc normal que certaine fonctionnalité de ne soit pas présente ou ne fonctionne pas.
 
 Cette application est développé avec Next.js.
+khoijukhuiklhu
