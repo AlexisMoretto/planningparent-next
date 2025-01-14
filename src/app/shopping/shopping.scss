@@ -1,0 +1,21 @@
+.shopping{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.addShoppingItem{
+    display: flex;
+    flex-direction: column;
+}
+.crossImage{
+    width: 5vw;
+    height: auto;
+}
+.shoppingDiv{
+    display: flex;
+    button{
+        border: none;
+        border-radius: 100%;
+    }
+}

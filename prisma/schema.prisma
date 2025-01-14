@@ -43,7 +43,5 @@ model Budget {
 model Shopping {
   id Int @id @default (autoincrement())
   name String
-  price Int
-  email String
-  
+  email String  
 }

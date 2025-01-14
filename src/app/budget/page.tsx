@@ -22,7 +22,6 @@ export default function BudgetGlobal() {
   const addAmountBudget = () => {
     setShowInputbudgetAmount(true);
   };
-
   const validateAmountBudget: MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.preventDefault();
 
