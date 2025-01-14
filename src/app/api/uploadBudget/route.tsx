@@ -1,5 +1,4 @@
-import { Budget, Prisma, PrismaClient } from "@prisma/client";
-import exp from "constants";
+import { Budget, PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient

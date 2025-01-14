@@ -32,11 +32,18 @@ model familyImage {
 }
 model Expense {
   id        Int      @id @default(autoincrement())
-  reason String
+  reason String @unique
   expense Int
-  email String
+  email String 
 }
 model Budget {
   budget Int
   email String @unique
+}
+model Shopping {
+  id Int @id @default (autoincrement())
+  name String
+  price Int
+  email String
+  
 }

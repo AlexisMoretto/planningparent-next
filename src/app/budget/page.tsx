@@ -1,5 +1,5 @@
 'use client';
-import { FormEventHandler, MouseEventHandler, useEffect, useState } from 'react';
+import { FormEventHandler, MouseEventHandler, ReactElement, useEffect, useState } from 'react';
 import './budget.scss';
 import check from 'public/checkMark.png';
 import cross from 'public/crossMark.png'
@@ -77,50 +77,43 @@ export default function BudgetGlobal() {
       setShowExpenseInput(false); 
     }
 
-        
-    
   };
+  // On utilise un useEffect afin de fetch les données du back 
+  useEffect(() => {
+    const fetchExpense = async () => {
+      try {
+        const response: { data: Expense[] } = await axios.get('api/downloadExpense', {
+          params: { email: userData.email },
+        });
+        const expensesFetched: Expense[] = response.data;
+        // On met ensuite a jours l'état des dépense et on les déstructures avec comme couple clé/valeur, 
+        setExpenses(expensesFetched.map(exp => ({ reason: exp.reason, amount: exp.expense })));
+      } catch (error) {
+        console.error('Erreur lors de la récupération des dépenses', error);
+      }
+    };
   
-  const fetchExpense = async () => {
-
-    const expenseContainer = document.querySelector('.expenseContainer') as HTMLElement
-    if(expenseContainer){
-      expenseContainer.innerHTML=''
-    } else {
-      console.log('Impossible de trouver la div .expenseContainer');
-      
-    }
-
+    fetchExpense();
+  }, [userData.email]);
+  
+  const deleteExpense = async (reasonToDelete: string) => {
     try {
-      const response:{data:Expense[]} = await axios.get('api/downloadExpense', {
-        params: {email:userData.email},
-      })
-      const expensesFetched: Expense[] = response.data
-      console.log('Dépense récupéré de la BDD', expensesFetched);
-
-      expensesFetched.forEach((expenseFetched) => {
-        const expenseDiv = document.createElement('div') as HTMLElement
-        expenseDiv.classList.add('expenseDiv')
-
-        const expenseElement = document.createElement('p')
-
-        expenseElement.textContent = `${expenseFetched.reason}: ${expenseFetched.expense}€`
-
-        expenseDiv.appendChild(expenseElement)
-        expenseContainer.appendChild(expenseDiv)
+      const response = await axios.delete('api/deleteExpense', {
+        data: { email: userData.email, reason: reasonToDelete },
       });
-      
+      console.log('Dépense supprimée :', response.data);
+  
+      // On met ensuite à jours manuellement l'état des expenses et on supprime visulement la ligne (elle est supprimé dans la BDD par le call API)
+      setExpenses(prevExpenses => prevExpenses.filter(exp => exp.reason !== reasonToDelete));
+      console.log(`Dépense avec le motif "${reasonToDelete}" supprimée`);
     } catch (error) {
-      console.error("Erreur lors de la récupération du budget et des raison sur downloadExpense")
+      console.error('Erreur lors de la suppression de la dépense', error);
     }
-    
-  }
+  };
   const calculateTotal = (): number => {
     return (budgetAmount || 0) - totalExpense;
   };
-useEffect(()=> {
-  fetchExpense()
-}),[]
+
   return (
     <div className="budget">
       <div className="title">
@@ -192,7 +185,24 @@ useEffect(()=> {
             </div>
           )}
         </div>
-        <div className='expenseContainer'></div>
+        <div className="expenseContainer">
+          {/*Avec le tableau des dépense récupéré de la BDD et mis a jour via le setExpenses, puis onn le destructure en utilisant le couple clé/valeur dépense/index. Et si le tableau n'est pas vide alors la destructuration s'effectue et on affiche les lignes avec le bouton. */}
+  {expenses.length > 0 ? (
+    expenses.map((expense, index) => (
+      <div key={index} className="expenseDiv">
+        <p>{`${expense.reason}: ${expense.amount} €`}</p>
+        <button
+          className="done"
+          onClick={() => deleteExpense(expense.reason)}
+        >
+          <Image className="crossImage" src={cross} alt="Supprimer" />
+        </button>
+      </div>
+    ))
+  ) : (
+    <p>Aucune dépense enregistrée</p>
+  )}
+</div>
       </div>
 
       <div className="total">
