@@ -1,13 +1,16 @@
 Bonjour et bienvenu sur cette application.
 
-Pour utliser l'application, il vous faut prisma donc lancer dans le terminal "npm i @prisma/client @latest"
+Pour utliser l'application, il vous faut :
+    - Un programme de permettant de gérer un serveur distant (J'utilise WAMP)
+    - prisma : lancer dans le terminal "npm i @prisma/client @latest"
 puis il faut le connecter à une base de donnée en local.
-Dans le .env:
-DATABASE_URL="mysql(language utilisé)://root(identifiant de connexion):root(mot de passe)@localhost:3306(port utilisé pour la BDD)/planningparents(nom de la BDD) ".
+    - Dans le fichier .env:
+            DATABASE_URL="mysql(language utilisé)://root(identifiant de connexion):root(mot de passe)@localhost:3306(port utilisé pour la BDD)/planningparents(nom de la BDD) ".
+
 Mettez vos informations afin de pouvoir autoriser prisma à se connecter et effectuer des changement.
 
-run : 'npx primsa migrate dev' pour connecter prisma a la BDD
-puis : 'npx prisma generate' pour importer les models présent dans schema.prisma
+    - 'npx primsa migrate dev' pour connecter prisma a la BDD
+    - 'npx prisma generate' pour importer les models présent dans schema.prisma
 
 Une fois cela fait, créer vous un compte puis profitez de l'application.
 
