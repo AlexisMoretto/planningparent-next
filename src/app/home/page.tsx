@@ -7,6 +7,7 @@ import axios from 'axios';
 import { imgStore, userStore } from '../store/store';
 import { useEffect } from 'react';
 import { familyImage } from '@prisma/client';
+import ClientLayout from '../ClientLayout';
 
 export default function Home() {
 
@@ -96,36 +97,15 @@ export default function Home() {
   
 console.log('userData du premier rendu', userData);
 
-  // Route de la navBarre
-    
-  const addMember = () => {
-    router.push('/addMember')
-  }
-  const goToBudget = () => {
-    router.push('/budget')
-  }
-  const goToShopping = () => {
-    router.push('/shopping')
-  }
-  const goToMeal = () => {
-    router.push('/meal')
-  }
-  const goToMeeting = () => {
-    router.push('/meeting')
-  }  
+  
   useEffect(()=> {
     fetchImages()
   }),[]
   
   return (
+    <ClientLayout>
     <div className="home">
       <div className='navBarre'>
-      <button className='addMember' type='button' onClick={addMember}>Ajouter un proche</button>
-      <button className='addMember' type='button' onClick={goToBudget}>Budget</button>
-      <button className='addMember' type='button' onClick={goToShopping}>Course</button>
-      <button className='addMember' type='button' onClick={goToMeal}>Repas</button>
-      <button className='addMember' type='button' onClick={goToMeeting}>Rendez-vous</button>
-      <button onClick={fetchImages}>FetchImages</button>
       </div>
       <div className='title'><h1>Famille de {userData.name} </h1></div>
       <div className='allTree'>
@@ -137,5 +117,6 @@ console.log('userData du premier rendu', userData);
         </div>
       </div>
     </div>  
+    </ClientLayout>
   );
 }

@@ -6,6 +6,7 @@ import { userStore } from '../store/store'
 import axios from 'axios'
 import cross from 'public/crossMark.png'
 import Image from 'next/image';
+import ClientLayout from '../ClientLayout'
 
 export default function ShoppingListFunction () {
 
@@ -69,6 +70,7 @@ export default function ShoppingListFunction () {
         fetchShoppingList()
     }),[name]
     return(
+        <ClientLayout>
         <div className='shopping'>
         <div className="title">
             <h1>Courses</h1>
@@ -98,5 +100,6 @@ export default function ShoppingListFunction () {
   )}
         </div>
         </div>
+        </ClientLayout>
     )
 }

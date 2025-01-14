@@ -6,6 +6,7 @@ import { FormEventHandler, useRef, useState } from "react";
 import { imgStore, userStore } from "../store/store";
 import axios from 'axios';
 import { familyImage } from '@prisma/client';
+import ClientLayout from '../ClientLayout';
 
 
 export default function AddMember () {
@@ -99,6 +100,7 @@ export default function AddMember () {
 
 
     return(
+        <ClientLayout>
         <div className='all'>
           <div className='title'>
             <h1>Ajouter un membre a la famille</h1>
@@ -116,5 +118,6 @@ export default function AddMember () {
             <div className='uploadSucceed'></div>      
         </form>
         </div>
+        </ClientLayout>
     )
 }

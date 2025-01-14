@@ -14,6 +14,7 @@ export default function Main({children} : { children: React.ReactNode }) {
 
   const [isLogged, setIsLogged] = useState(false)
   const userData = userStore.getState() 
+
   const isLoggedIn = () => {
     if(userData.token){
       setIsLogged(true)
@@ -23,17 +24,17 @@ export default function Main({children} : { children: React.ReactNode }) {
 
   return (
     <div>        
-        <Register />
-        
-        { isLogged ? (
-          <div >
+        <Register />        
+        { isLogged ?  (
+          <div>
+          
         <Login/>
         <Home/>
         <AddMember/>
         <Budget/>
         <Shopping/>
         <Meal/>
-
+        
         </div>) : ''}
         
         

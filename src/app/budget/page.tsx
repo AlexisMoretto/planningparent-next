@@ -7,6 +7,7 @@ import Image from 'next/image';
 import axios from 'axios';
 import type { Budget, Expense } from '@prisma/client';
 import { userStore } from '../store/store';
+import ClientLayout from '../ClientLayout';
 
 
 export default function BudgetGlobal() {
@@ -114,6 +115,7 @@ export default function BudgetGlobal() {
   };
 
   return (
+    <ClientLayout>
     <div className="budget">
       <div className="title">
         <h1>Budget Prévisionnel</h1>
@@ -209,5 +211,6 @@ export default function BudgetGlobal() {
       </div>
       </div>
     </div>
+    </ClientLayout>
   );
 }
