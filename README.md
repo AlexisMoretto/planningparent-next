@@ -1,8 +1,8 @@
 Bonjour et bienvenu sur cette application.
 
 Pour utliser l'application, il vous faut :
-    - Un programme de permettant de gérer un serveur distant (J'utilise WAMP)
-    - prisma : lancer dans le terminal "npm i @prisma/client @latest"
+    - Un programme de permettant de gérer un serveur distant (J'utilise WAMP).
+    - prisma : lancer dans le terminal "npm i @prisma/client @latest".
     - Dans le fichier .env:
             DATABASE_URL="mysql(language utilisé)://root(identifiant de connexion):root(mot de passe)@localhost:3306(port utilisé pour la BDD)/planningparents(nom de la BDD) ".
 
