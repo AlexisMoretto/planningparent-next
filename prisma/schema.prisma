@@ -45,3 +45,16 @@ model Shopping {
   name String
   email String  
 }
+model Event {
+  id Int @id @default (autoincrement())
+  eventName String
+  email String
+  eventTime String
+  eventDate DateTime
+}
+model Meal {
+  id Int @id @default (autoincrement())
+  name String
+  mealDate DateTime
+  email String
+}

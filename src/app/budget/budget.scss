@@ -14,6 +14,7 @@
     align-items: center;
     flex-direction: column;
     width:100%;
+    font-weight: 900;
 }
 .total{
     display: flex;
@@ -39,8 +40,11 @@
     justify-content: center;
 }
 .crossImage{
-    width: 100%;
+    width: 60%;
     height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .showButtonAmountContainer{
     display: flex;
@@ -49,6 +53,8 @@
     flex-direction: column;
 }
 .done{
+    display: flex;
+    justify-content: center;
     width: 5vw;
     height: auto;
     object-fit: contain;
@@ -64,16 +70,22 @@
     justify-content: center;
     align-items: center;
 }
-.expenseContainer{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
+
 .deleteButton{
     width: 5vw;
     height: 4vh;
 }
 .expenseDiv{
     display: flex;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    height: fit-content;
+    gap: 5%;
+}
+.expense{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
