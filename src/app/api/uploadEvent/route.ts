@@ -8,7 +8,7 @@ export async function POST(req:Request) {
 
         const body = await req.json();
 
-        const {eventName, eventTime,eventDate, email }: Event = body
+        const {eventName, eventTime,eventDate, email, nameConcerned }: Event = body
 
         if(!eventName||!eventTime||!email||!eventDate) {
             return NextResponse.json(
@@ -22,6 +22,7 @@ export async function POST(req:Request) {
 
         const newEvent = await prisma.event.create({
             data: {
+                nameConcerned,
                 eventName, 
                 eventTime,
                 eventDate: new Date(eventDate),

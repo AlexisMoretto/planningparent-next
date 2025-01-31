@@ -51,10 +51,17 @@ model Event {
   email String
   eventTime String
   eventDate DateTime
+  nameConcerned String
 }
 model Meal {
   id Int @id @default (autoincrement())
   name String
   mealDate DateTime
   email String
+}
+model Task {
+  id Int @id @default (autoincrement())
+  nameConcerned String
+  email String
+  taskName String
 }

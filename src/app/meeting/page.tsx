@@ -24,6 +24,7 @@ export default function Meeting() {
   const [eventName, setEventName] = useState<string>(""); 
   const [eventTime, setEventTime] = useState<string>("");
   const [clickedDate, setClickedDate] = useState<string>(""); // Date cliquée (ex : "2025-01-20")
+  const [nameConcerned, setNameConcerned] = useState<string>('')
 
   // Liste des événements, typée comme un tableau d'objets Event
   const [events, setEvents] = useState<FrontEvent[]>([]); 
@@ -53,7 +54,8 @@ export default function Meeting() {
           eventName,
           eventTime,
           eventDate:clickedDate,
-          email:userData.email
+          email:userData.email,
+          nameConcerned,
         })
         const eventFromBDD:Event = response.data
         console.log('eventFromBDD', eventFromBDD);
@@ -92,7 +94,8 @@ export default function Meeting() {
       const response = await axios.delete('/api/deleteEvent', {
         data : {
           email: userData.email,
-          eventName: eventTitle
+          eventName: eventTitle,
+          nameConcerned:nameConcerned
         }
       })
       console.log("Evenement supprimé", response.data);
@@ -166,6 +169,10 @@ export default function Meeting() {
                 onChange={(e) => setEventTime(e.target.value)}
                 onKeyDown={handleKeyDownValidate}
               />
+              <input type="text"
+              placeholder="Personne concerné"
+              onChange={(e) => setNameConcerned(e.target.value)}
+               />
               <button type="submit" onClick={addEvent}>
                 Valider
               </button>

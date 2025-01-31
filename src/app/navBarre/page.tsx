@@ -32,7 +32,7 @@ export default function NavBarre () {
     return(
         <div className='navBarreContainer'>
             <div className='navBarre'>
-      <button className='addMember' type='button' onClick={goToHome}><Image className='homeImg' src={home} alt = "home"></Image> </button>       
+      <button className='addMember' type='button' onClick={goToHome}>Acceuil </button>       
       <button className='addMember' type='button' onClick={addMember}>Ajouter un proche</button>
       <button className='addMember' type='button' onClick={goToBudget}>Budget</button>
       <button className='addMember' type='button' onClick={goToShopping}>Course</button>

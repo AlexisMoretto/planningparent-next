@@ -5,15 +5,20 @@ import './Home.scss';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { imgStore, userStore } from '../store/store';
-import { useEffect } from 'react';
-import { familyImage } from '@prisma/client';
+import { useEffect, useState } from 'react';
+import { familyImage, Task } from '@prisma/client';
 import ClientLayout from '../ClientLayout';
-
+import Image from 'next/image';
+import checkMark from "../../../public/checkMark.svg"
 export default function Home() {
 
   const router = useRouter();
   const userData = userStore.getState()
   const imageData = imgStore.getState()
+  const [showModal, setShowModal] = useState<boolean>()
+  const [modalName, setModalName] = useState<string>('')
+  const [taskName, setTaskName] = useState<string>('')
+  const [inputTask, setInputTask] = useState<boolean>(false)
   
 
   const verifyoken = async (token: any) => {
@@ -72,7 +77,13 @@ export default function Home() {
   
         // Ajouter une action au clic sur le bouton
         imgButton.onclick = () => {
-          alert(`Vous avez cliqué sur ${imageFromBDD.firstName} ${imageFromBDD.name}`);
+          console.log('Image clické');
+          
+          // Il faut ouvrir une modal 
+          setShowModal(true)
+          setModalName(imageFromBDD.firstName)
+
+         
         };
   
         // Ajouter l'image au bouton
@@ -101,6 +112,25 @@ console.log('userData du premier rendu', userData);
   useEffect(()=> {
     fetchImages()
   }),[]
+  const fetchSummary = async () => {
+    try {
+      const response: {data: Task} = await axios.get('api/summary', {
+        params: {
+          email: userData.email,
+          nameConcerned:modalName,
+          taskName,
+
+        }
+      } 
+    )
+    const summaryFetched = response.data
+    console.log('summaryFetched', summaryFetched);
+    
+    } catch (error) {
+      console.error("Erreur lors de la récupération des informations du back sur la personne");
+      
+    }
+  }
   
   return (
     <ClientLayout>
@@ -116,6 +146,42 @@ console.log('userData du premier rendu', userData);
         <div className='membersContainer'></div>
         </div>
       </div>
+      {showModal && (
+        <div className='mainModal'>
+        <div className='modalName'>          
+          {modalName}
+          <button onClick={()=> setShowModal(false)}>X</button>
+        </div>
+        <div className='summary'>
+          <div className='task'>
+            <p>Tache</p>
+            <button onClick={() => setInputTask(true)} >+</button>
+            {
+              inputTask && (
+                <div className='addTask'>
+                  <div className='addTaskInput'>
+                <input type="text"
+                className='inputTask'
+                placeholder='Tache à ajouter'
+                 />
+                 </div>
+                 <div className='addTaskButtonV'>
+                 <button><Image className='checkMark' src= {checkMark} alt='' /></button> 
+                 </div> 
+                 <div className='addTaskButtonX'>
+                 <button onClick={() => setInputTask(false)}>X</button>
+                 </div>
+                                
+                 </div>
+              )
+            }
+            <div className='event'>
+              <p>Evenement</p>
+            </div>
+          </div>
+        </div>
+        </div>
+      )}
     </div>  
     </ClientLayout>
   );

@@ -16,7 +16,7 @@
     "@fullcalendar/timegrid": "^6.1.15",
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
-    "@prisma/client": "^6.2.1",
+    "@prisma/client": "^6.3.0",
     "@reduxjs/toolkit": "^2.2.7",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.16",
@@ -51,7 +51,7 @@
     "eslint-config-next": "14.2.7",
     "mini-css-extract-plugin": "^2.9.1",
     "postcss": "^8.5.1",
-    "prisma": "^6.2.1",
+    "prisma": "^6.3.0",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.2",
     "yarn": "^1.22.22"

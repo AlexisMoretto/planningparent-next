@@ -1,40 +1,62 @@
 .membersContainer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.member {
+  width: 150px;
+  text-align: center;
+}
+  
+.imgButton {
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  border: none;
   }
   
-  .member {
-    width: 150px;
-    text-align: center;
-  }
-  
-  .imgButton {
-    border: none;
-    background: none;
-    padding: 0;
-    cursor: pointer;
-  }
-  
-  .imgButton img {
+.imgButton img {
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.imgButton img:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.member h2 {
+  margin-top: 10px;
+  font-size: 16px;
+  color: #333;
+}
+.home{
+  text-align: center;
+}
+.checkMark{
     width: 100%;
     height: auto;
-    border-radius: 50%;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
+}
+.addTask{
+display: flex;
+justify-content: center;
+align-items: center;
+button{
+  border: none;
+  width: fit-content;
+}
+
+  height: auto;
+}
+.addTaskButtonV{
   
-  .imgButton img:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  .member h2 {
-    margin-top: 10px;
-    font-size: 16px;
-    color: #333;
-  }
-  .home{
-    text-align: center;
-  }
-  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 10%;
+  height: auto;
+}
