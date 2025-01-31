@@ -81,7 +81,9 @@
     align-items: center;
     width: fit-content;
     height: fit-content;
-    gap: 5%;
+    p{
+        width: 100%;
+    }
 }
 .expense{
     display: flex;

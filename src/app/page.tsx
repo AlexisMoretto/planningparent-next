@@ -23,7 +23,9 @@ export default function Main({children} : { children: React.ReactNode }) {
  
 
   return (
-    <div>        
+    
+    <div>      
+        
         <Register />        
         { isLogged ?  (
           <div>

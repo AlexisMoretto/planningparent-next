@@ -187,7 +187,7 @@ export default function BudgetGlobal() {
           </div>
 
           <div className="total">
-            <h2>Total: {displayTotal} €</h2>
+            <h2>Total: {displayTotal}€</h2>
           </div>
         </div>
       </div>
