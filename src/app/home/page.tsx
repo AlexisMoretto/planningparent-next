@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { imgStore, userStore } from '../store/store';
 import { useEffect, useState } from 'react';
-import { familyImage, Task } from '@prisma/client';
+import { Event, familyImage, Task } from '@prisma/client';
 import ClientLayout from '../ClientLayout';
 import Image from 'next/image';
 import checkMark from "../../../public/checkMark.svg"
@@ -15,10 +15,12 @@ export default function Home() {
   const router = useRouter();
   const userData = userStore.getState()
   const imageData = imgStore.getState()
-  const [showModal, setShowModal] = useState<boolean>()
+  const [showModal, setShowModal] = useState<boolean>(false)
   const [modalName, setModalName] = useState<string>('')
   const [taskName, setTaskName] = useState<string>('')
   const [inputTask, setInputTask] = useState<boolean>(false)
+  const [task, setTask] = useState<{taskName: string;}[]>()
+  const [event, setEvent] = useState<Event[]>()
   
 
   const verifyoken = async (token: any) => {
@@ -33,8 +35,6 @@ export default function Home() {
           },
         }
       );
-      
-      console.log('/api/verify-token',response);
       
       
     } catch (error) {
@@ -58,7 +58,6 @@ export default function Home() {
       });
   
       const imagesFromBDD = response.data as familyImage[];
-      console.log("Réponse de l'API stockée dans imagesFromBDD", imagesFromBDD);
   
       // Créer une div par membre et ajouter le contenu
       imagesFromBDD.forEach((imageFromBDD: familyImage) => {
@@ -77,7 +76,7 @@ export default function Home() {
   
         // Ajouter une action au clic sur le bouton
         imgButton.onclick = () => {
-          console.log('Image clické');
+
           
           // Il faut ouvrir une modal 
           setShowModal(true)
@@ -104,33 +103,95 @@ export default function Home() {
       console.error("Erreur lors de la récupération des images :", error);
     }
   };
-  
-  
-console.log('userData du premier rendu', userData);
-
-  
+    
   useEffect(()=> {
     fetchImages()
   }),[]
-  const fetchSummary = async () => {
-    try {
-      const response: {data: Task} = await axios.get('api/summary', {
-        params: {
-          email: userData.email,
-          nameConcerned:modalName,
-          taskName,
+  const addTask = async () => {
 
-        }
-      } 
-    )
-    const summaryFetched = response.data
-    console.log('summaryFetched', summaryFetched);
-    
+    try {
+
+      console.log("Donnée à envoyer:",'email:', userData.email, "TaskName:", taskName, "modalName:", modalName);
+      const response = await axios.post('api/uploadTask', {
+        taskName: taskName,
+        email: userData.email,
+        nameConcerned: modalName,
+      })
+      console.log("response de l'upload de Task:", response.data);
+      setTaskName('');
+      fetchTask()
     } catch (error) {
-      console.error("Erreur lors de la récupération des informations du back sur la personne");
+      console.error("Erreur lors de l'envoi de task, vérifie que tout les éléments sont envoyés")
+    }
+  }
+  const deleteTask = async (taskName: string)=> {
+    try {
+      
+      const response = await axios.delete('api/deleteTask', {
+        data: {
+          email: userData.email, 
+          taskName: taskName,
+          nameConcerned: modalName
+        }
+      })
+      console.log("Tache supprimé");
+      fetchTask()
+    } catch (error) {
       
     }
   }
+  const fetchTask = async () => {
+
+    console.log("Fetch des taches lancé");
+    
+
+    try {
+      const response = await axios.get('api/downloadTask',
+        {params: 
+          {email:userData.email,
+            nameConcerned:modalName,
+          }
+        }
+       )
+       const fetchedTask = response.data
+       console.log("fetchedTask:" , fetchedTask);
+       setTask(fetchedTask.map((taskParam: {taskName:string}) => ({
+        taskName : taskParam.taskName
+       })))
+    } catch (error) {
+      
+    }
+  };
+  const fetchEvent = async () => {
+    try {
+      const response = await axios.get('api/downloadEventHome',{
+        params: {
+          nameConcerned:modalName,
+          email: userData.email
+        }
+        
+      })
+      const eventFetched = response.data
+      setEvent(
+        eventFetched.map((event:Event) => ({
+          eventName:event.eventName,
+          eventDate: event.eventDate,
+          eventTime: event.eventTime,
+        }))
+      )
+    } catch (error) {
+      console.error("erreur lors de la récupération des evts");
+      
+    }
+  }
+
+  useEffect(() => {
+    if (modalName) {
+      console.log("modalName mis à jour :", modalName);
+      fetchTask();
+      fetchEvent();
+    }
+  }, [modalName]);
   
   return (
     <ClientLayout>
@@ -154,8 +215,10 @@ console.log('userData du premier rendu', userData);
         </div>
         <div className='summary'>
           <div className='task'>
+            <div className='taskAndButton'>
             <p>Tache</p>
             <button onClick={() => setInputTask(true)} >+</button>
+            </div>
             {
               inputTask && (
                 <div className='addTask'>
@@ -163,20 +226,36 @@ console.log('userData du premier rendu', userData);
                 <input type="text"
                 className='inputTask'
                 placeholder='Tache à ajouter'
-                 />
+                onChange={(e) => setTaskName(e.target.value)}/>
                  </div>
                  <div className='addTaskButtonV'>
-                 <button><Image className='checkMark' src= {checkMark} alt='' /></button> 
+                 <button onClick={addTask} ><Image className='checkMark' src= {checkMark} alt='' /></button> 
                  </div> 
                  <div className='addTaskButtonX'>
                  <button onClick={() => setInputTask(false)}>X</button>
                  </div>
-                                
+                 
                  </div>
               )
             }
+            {task && task.map((t, index) => (
+                    <div className='taskDisplayed' key={index}>
+                      <p>{t.taskName}</p>
+                      <button onClick={() => deleteTask(t.taskName)} >X</button>
+                    </div>
+                      )
+                    )
+                  }             
             <div className='event'>
               <p>Evenement</p>
+             {event && event.map((e, index) => (
+                <div className='eventDisplayed' key={index}>
+                  <p>
+                  {e.eventName} - {new Date(e.eventDate).toLocaleDateString()} - {(e.eventTime)}
+                  </p>
+
+                </div>
+             ))}     
             </div>
           </div>
         </div>

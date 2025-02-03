@@ -75,7 +75,6 @@ export default function BudgetGlobal() {
     }
   };
 
-  // ⚡ Solution 3 : recalcul dynamique du total des dépenses
   useEffect(() => {
     const newTotalExpense = expenses.reduce((acc, curr) => acc + curr.amount, 0);
     setDisplayTotal((budgetAmount || 0) - newTotalExpense);

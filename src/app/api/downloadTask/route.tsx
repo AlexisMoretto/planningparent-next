@@ -6,8 +6,8 @@ const prisma = new PrismaClient();
 export async function GET( req: Request) {
 
     const {searchParams} = new URL (req.url);
-    const email: Task = searchParams.get('email')
-    const nameConcerned = searchParams.get('nameConcerned')
+    const email = searchParams.get('email') as string
+    const nameConcerned = searchParams.get('nameConcerned') as string
 
     if(!email && !nameConcerned) {
         return NextResponse.json(
@@ -17,13 +17,13 @@ export async function GET( req: Request) {
     }
     try {
 
-        const tasks = await prisma.task.findMany({
+        const tasks: Task[] = await prisma.task.findMany({
             where: {
                 email:email,
-                nameConcerned
+                nameConcerned:nameConcerned
             }
         })
-
+        return NextResponse.json(tasks, {status:200})
     } catch (error) {
         console.error("Erreur lors de la récupération des information des tache et des evts coté back");
         return NextResponse.json(
