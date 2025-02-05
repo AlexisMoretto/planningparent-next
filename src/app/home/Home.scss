@@ -1,32 +1,40 @@
 .membersContainer {
+  display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  display: flex;
   justify-content: center;
+  padding: 20px;
 }
 
 .member {
   width: 150px;
   text-align: center;
 }
-  
+
+
 .imgButton {
   background: none;
   padding: 0;
   cursor: pointer;
   border: none;
-  }
-  
-.imgButton img {
-  width: 100%;
-  height: auto;
-  border-radius: 50%;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  justify-content: center;
 }
+
+
+.imgButton img {
+  width: 120px; 
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%; 
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 3px solid #ddd;
+}
+
 
 .imgButton img:hover {
   transform: scale(1.1);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .member h2 {
@@ -34,64 +42,88 @@
   font-size: 16px;
   color: #333;
 }
-.home{
+
+.home {
   text-align: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
-.checkMark{
-    width: 100%;
-    height: auto;
-}
-.addTask{
-display: flex;
-justify-content: space-between;
-align-items: center;
-button{
-  border: none;
-  width: fit-content;
-}
 
+.checkMark {
+  width: 100%;
   height: auto;
 }
-.addTaskButtonV{
-  
+
+.addTask {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  button {
+    border: none;
+    width: fit-content;
+  }
+}
+
+.addTaskButtonV {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 10%;
   height: auto;
 }
-.mainModal{
+
+
+.mainModal {
   width: 50%;
   border: solid;
   display: flex;
   flex-direction: column;
-    justify-content: center;
-  .modalName{
-    display: flex;
   justify-content: center;
-  align-items: center;
-  width: 100%;
-  position: relative;
+
+  .modalName {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    position: relative;
+
     button {
       position: absolute;
-    right: 0;
-    background: none;
-    border: none;
-    cursor: pointer;
-    margin: 0;
+      right: 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin: 0;
     }
   }
 }
-.taskAndButton{
+
+
+.task {
+  display: flex;
+  flex-direction: column;
+}
+.taskAndButton {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  button{
+    border: none;
+    margin: 0;
+  }
+}
+
+.taskDisplayed {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
   position: relative;
+
   button {
     background: none;
     border: none;
@@ -99,20 +131,15 @@ button{
     margin: 0;
   }
 }
-.task{
-  display: flex;
-  flex-direction: column;
-}
-.taskDisplayed{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  position: relative;
-  button {
-    background: none;
+.deletePeopleButton{
+  background: none;
     border: none;
     cursor: pointer;
     margin: 0;
+}
+@media (max-width: 600px) {
+  .imgButton img {
+    width: 90px;
+    height: 90px;
   }
 }

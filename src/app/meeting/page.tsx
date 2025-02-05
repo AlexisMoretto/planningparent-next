@@ -50,7 +50,7 @@ export default function Meeting() {
       try {
         console.log('Donnée à envoyer: Email', userData.email, 'eventName:', eventName,'eventDate :', clickedDate, 'EventTime:',eventTime);
         
-        const response: {data: Event} = await axios.post('/api/uploadEvent', {
+        const response: {data: Event} = await axios.post('/api/event', {
           eventName,
           eventTime,
           eventDate:clickedDate,
@@ -91,7 +91,7 @@ export default function Meeting() {
 
   const deleteEvent = async (eventTitle: string) => {
     try {
-      const response = await axios.delete('/api/deleteEvent', {
+      const response = await axios.delete('/api/event', {
         data : {
           email: userData.email,
           eventName: eventTitle,
@@ -115,7 +115,7 @@ export default function Meeting() {
   };
   const fetchEvent = async () => {
     try {
-      const response :{data:Event[]} = await axios.get('/api/downloadEvent', {
+      const response :{data:Event[]} = await axios.get('/api/event', {
         params: {email:userData.email},
       })
       const eventFetched: Event[] = response.data

@@ -59,7 +59,7 @@ export default function ShoppingListFunction () {
     const fetchShoppingList = async () => {
                         
         try {
-            const response: {data: Shopping[]} = await axios.get('api/downloadShoppingList',{
+            const response: {data: Shopping[]} = await axios.get('api/shopping',{
                 params: {email:userData.email},
             });
             const itemFetched: Shopping[] = response.data

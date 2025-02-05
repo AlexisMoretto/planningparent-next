@@ -61,7 +61,7 @@ export default function AddMember () {
       const email = userData.email     
       
       // Maintenant qu'on a toutes nos Info on envoi a l'API
-      const response = await axios.post("/api/uploadImage", {
+      const response = await axios.post("/api/image", {
         email:userData.email,
         base64: base64,
         name: name,

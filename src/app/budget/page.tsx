@@ -1,8 +1,8 @@
 'use client';
 import { FormEventHandler, MouseEventHandler, useEffect, useState } from 'react';
 import './budget.scss';
-import check from 'public/checkMark.svg';
-import cross from 'public/crossMark.svg';
+import check from '../../../public/checkMark.svg';
+import cross from '../../../public/crossMark.svg';
 import Image from 'next/image';
 import axios from 'axios';
 import type { Budget, Expense } from '@prisma/client';
@@ -24,11 +24,11 @@ export default function BudgetGlobal() {
     e.preventDefault();
     setShowInputbudgetAmount(false);
     try { 
-      const response = await axios.post('/api/uploadBudget', {
+      const response = await axios.post('/api/budget', {
         budget: budgetAmount,
         email: userData.email,
       });
-      console.log('Response from /api/uploadBudget', response.data);
+      console.log('Response from /api/budget', response.data);
     } catch (error) {
       console.error("Erreur lors de l'envoi du Budget Prévu");
     }
@@ -41,7 +41,7 @@ export default function BudgetGlobal() {
       const newExpense = { reason, amount: expense };
 
       try {
-        const response = await axios.post('/api/uploadExpense', {
+        const response = await axios.post('/api/expense', {
           expense,
           reason,
           email: userData.email,
@@ -63,7 +63,7 @@ export default function BudgetGlobal() {
   // Suppression d'une dépense
   const deleteExpense = async (reasonToDelete: string) => {
     try {
-      const response = await axios.delete('/api/deleteExpense', {
+      const response = await axios.delete('/api/expense', {
         data: { email: userData.email, reason: reasonToDelete },
       });
       console.log('Dépense supprimée :', response.data);
@@ -84,7 +84,7 @@ export default function BudgetGlobal() {
   useEffect(() => {
     const fetchExpense = async () => {
       try {
-        const response = await axios.get('/api/downloadExpense', {
+        const response = await axios.get('/api/expense', {
           params: { email: userData.email },
         });
         const expensesFetched = response.data;
@@ -101,7 +101,7 @@ export default function BudgetGlobal() {
   useEffect(() => {
     const fetchBudgetAmount = async () => {
       try {
-        const response = await axios.get('/api/downloadBudget', {
+        const response = await axios.get('/api/budget', {
           params: { email: userData.email },
         });
         const fetchedBudget = response.data;

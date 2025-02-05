@@ -47,7 +47,7 @@ export default function MealPage() {
       try {
         console.log('Donnée à envoyer: Email', userData.email, 'mealName:', mealName,'mealDate :', clickedDate, );
         
-        const response: {data: Meal} = await axios.post('/api/uploadMeal', {
+        const response: {data: Meal} = await axios.post('/api/meal', {
           name:mealName,
           mealDate:clickedDate,
           email:userData.email
@@ -85,7 +85,7 @@ export default function MealPage() {
 
   const deleteMeal = async (mealTitle: string) => {
     try {
-      const response = await axios.delete('/api/deleteMeal', {
+      const response = await axios.delete('/api/meal', {
         data: { email: userData.email, name: mealTitle }
       });
   
@@ -104,7 +104,7 @@ export default function MealPage() {
   };
   const fetchMeal = async () => {
     try {
-      const response :{data:Meal[]} = await axios.get('/api/downloadMeal', {
+      const response :{data:Meal[]} = await axios.get('/api/meal', {
         params: {email:userData.email},
       })
       const mealFetched: Meal[] = response.data

@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation'
 import axios from 'axios'
 import { getActionChangeUserData } from '../actions/actions'
 import { userStore } from '../store/store'
-import { User } from '../@types'
+import { User } from '@prisma/client'
+
 
 export default function Register () {
 

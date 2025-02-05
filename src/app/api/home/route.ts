@@ -10,7 +10,7 @@ export async function GET(req:Request) {
     const email= searchParams.get('email')
     const nameConcerned = searchParams.get('nameConcerned')
 
-    console.log("Requête API - email:", email, "nameConcerned:", nameConcerned); // 🔥 Debug API
+    console.log("Requête API - email:", email, "nameConcerned:", nameConcerned);
 
     if(!email || ! nameConcerned) {
         return NextResponse.json(

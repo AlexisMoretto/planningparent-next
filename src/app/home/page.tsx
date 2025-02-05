@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { imgStore, userStore } from '../store/store';
 import { useEffect, useState } from 'react';
-import { Event, familyImage, Task } from '@prisma/client';
+import { Event, familyImage, Task, User } from '@prisma/client';
 import ClientLayout from '../ClientLayout';
 import Image from 'next/image';
 import checkMark from "../../../public/checkMark.svg"
@@ -21,6 +21,8 @@ export default function Home() {
   const [inputTask, setInputTask] = useState<boolean>(false)
   const [task, setTask] = useState<{taskName: string;}[]>()
   const [event, setEvent] = useState<Event[]>()
+  const [people, setPeople] = useState<familyImage[]>()
+  const [deletePeopleModal, setDeletePeopleModal] = useState<boolean>()
   
 
   const verifyoken = async (token: any) => {
@@ -43,76 +45,25 @@ export default function Home() {
     }
   }; 
   const fetchImages = async () => {
-    // Vider le contenu de la div principale
-    const membersContainer = document.querySelector('.membersContainer') as HTMLElement;
-    if (membersContainer) {
-      membersContainer.innerHTML = '';
-    } else {
-      console.error('La div .membersContainer est introuvable dans le DOM');
-      return;
-    }
-  
+    
     try {
-      const response: { data: familyImage[] } = await axios.get('/api/downloadImage', {
+      const response: { data: familyImage[] } = await axios.get('/api/image', {
         params: { email: userData.email },
       });
   
       const imagesFromBDD = response.data as familyImage[];
-  
-      // Créer une div par membre et ajouter le contenu
-      imagesFromBDD.forEach((imageFromBDD: familyImage) => {
-        // Conteneur parent pour chaque membre
-        const memberDiv = document.createElement('div') as HTMLElement;
-        memberDiv.classList.add('member');
-  
-        
-        const imgButton = document.createElement('button') as HTMLButtonElement;
-        imgButton.classList.add('imgButton');
-        imgButton.type = 'button'; // Type bouton pour éviter le comportement par défaut
-  
-        const imgElement = document.createElement('img');
-        imgElement.src = imageFromBDD.base64;
-        imgElement.alt = `${imageFromBDD.firstName} ${imageFromBDD.name}`;
-  
-        // Ajouter une action au clic sur le bouton
-        imgButton.onclick = () => {
-
-          
-          // Il faut ouvrir une modal 
-          setShowModal(true)
-          setModalName(imageFromBDD.firstName)
-
-         
-        };
-  
-        // Ajouter l'image au bouton
-        imgButton.appendChild(imgElement);
-  
-        // Nom complet
-        const nameElement = document.createElement('h2');
-        nameElement.textContent = `${imageFromBDD.firstName} ${imageFromBDD.name}`;
-  
-        // Ajouter le bouton et le nom dans le conteneur membre
-        memberDiv.appendChild(imgButton);
-        memberDiv.appendChild(nameElement);
-  
-        // Ajouter le conteneur du membre dans la div principale
-        membersContainer.appendChild(memberDiv);
-      });
+      console.log(imagesFromBDD);
+      setPeople(imagesFromBDD)
     } catch (error) {
       console.error("Erreur lors de la récupération des images :", error);
     }
   };
-    
-  useEffect(()=> {
-    fetchImages()
-  }),[]
   const addTask = async () => {
 
     try {
 
       console.log("Donnée à envoyer:",'email:', userData.email, "TaskName:", taskName, "modalName:", modalName);
-      const response = await axios.post('api/uploadTask', {
+      const response = await axios.post('api/task', {
         taskName: taskName,
         email: userData.email,
         nameConcerned: modalName,
@@ -127,7 +78,7 @@ export default function Home() {
   const deleteTask = async (taskName: string)=> {
     try {
       
-      const response = await axios.delete('api/deleteTask', {
+      const response = await axios.delete('api/task', {
         data: {
           email: userData.email, 
           taskName: taskName,
@@ -146,7 +97,7 @@ export default function Home() {
     
 
     try {
-      const response = await axios.get('api/downloadTask',
+      const response = await axios.get('/api/task',
         {params: 
           {email:userData.email,
             nameConcerned:modalName,
@@ -162,9 +113,10 @@ export default function Home() {
       
     }
   };
+
   const fetchEvent = async () => {
     try {
-      const response = await axios.get('api/downloadEventHome',{
+      const response = await axios.get('api/home',{
         params: {
           nameConcerned:modalName,
           email: userData.email
@@ -192,7 +144,29 @@ export default function Home() {
       fetchEvent();
     }
   }, [modalName]);
-  
+  useEffect(() => {
+    fetchImages()
+  },[])
+  const deletePeople = async () => {    
+    try {
+      const response = await axios.delete("/api/image", {
+        data: {
+          email:userData.email,
+          name:modalName,
+        }
+        
+      })
+      console.log(response.data.message)
+      setDeletePeopleModal(false)
+      fetchImages()
+      
+    } catch (error) {
+      console.error("Erreur lors de la suppression de la personnne")
+    }
+  }
+  const goToAddMember = () => {
+    router.push('addMember')
+  }
   return (
     <ClientLayout>
     <div className="home">
@@ -204,7 +178,23 @@ export default function Home() {
         <h2>Membre de la famille</h2>
         </div>
         <div className='tree'>
-        <div className='membersContainer'></div>
+        <div className='membersContainer'>
+        <div className="membersContainer">
+          {people && people.length > 0 ? (
+            people.map((profil, index) => (
+          <div key={index} className="memberCard">
+            <button className='imgButton' onClick={() => setModalName(profil.firstName)} ><img className='peopleImage' src={profil.base64} alt={profil.firstName} onClick={ () => {setShowModal(true)}} /></button>
+            <p>{profil.firstName} {profil.name}</p>
+      </div>
+    ))
+  ) : (
+    <div className='noMember'>
+    <p>Aucun membre trouvé.</p>
+    <button onClick={goToAddMember}>Ajouter un membre à la famille</button>
+    </div>
+  )}
+</div>
+        </div>
         </div>
       </div>
       {showModal && (
@@ -259,7 +249,18 @@ export default function Home() {
             </div>
           </div>
         </div>
+        <div className='deletePeople'>
+          <button className='deletePeopleButton' onClick={()=> setDeletePeopleModal(true)}>Supprimer de la famille</button>
+          {deletePeopleModal && (
+            <div className='deletePeopleModal'>
+              <p>Etes vous sur de vouloir supprimer cette personne</p>
+              <button onClick={deletePeople}>Oui</button>
+              <button onClick={() =>setDeletePeopleModal(false)}>Annuler</button>
+            </div>
+          )}
         </div>
+        </div>
+        
       )}
     </div>  
     </ClientLayout>
