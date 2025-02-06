@@ -55,11 +55,10 @@ export async function POST (req: NextRequest) {
             console.log('Vérification reussi');
             
         }
-        const newBudget: Budget = await prisma.budget.create({
-            data: {
-                email, 
-                budget,
-            }
+        const newBudget: Budget = await prisma.budget.upsert({
+            where: { email:email },
+            update: { budget:budget},
+            create: {email:email, budget:budget }
         });
         return NextResponse.json(newBudget, {status:201});
     } catch (error) {

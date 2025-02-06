@@ -7,7 +7,8 @@ const prisma = new PrismaClient()
 export async function DELETE (req: Request) {
     const body = await req.json()
     const {email, name} = body
-
+    console.log(email, name);
+    
     if(!email && !name) {
         console.log("email ou nom de l'article manquant", email, name);       
         return NextResponse.json(
@@ -41,7 +42,7 @@ export async function GET(request:Request) {
      const { searchParams } = new URL(request.url)
 
     const email = searchParams.get('email'); 
-
+    
     if(!email){
         return NextResponse.json(
             {message: 'email required'},
@@ -90,7 +91,7 @@ export async function POST(req:Request) {
                 email
             }
         })
-        return NextResponse.json(name, {status:201})
+        return NextResponse.json(newArticle, {status:201})
         
     } catch (error) {
         console.error('Erreur lors de l\'envoi de l\'article')

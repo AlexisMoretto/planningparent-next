@@ -7,7 +7,7 @@ export async function DELETE (req: Request){
     const body = await req.json();
 
     const {taskName, email, nameConcerned} = body;
-
+    console.log( email, nameConcerned, taskName );
     if(!email|| !taskName || !nameConcerned){
         return NextResponse.json(
             {message: "email ou nom de la tache manquante"},
@@ -73,7 +73,8 @@ export async function POST(req:Request) {
     try {
         const body = await req.json();
         const {email, nameConcerned, taskName } = body
-
+        
+        
         if (!nameConcerned || !email || !taskName ) {
             return NextResponse.json(
                 {message : "Email ou nom de la personne manquante"},

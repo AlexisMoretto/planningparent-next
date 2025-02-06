@@ -23,6 +23,7 @@ export default function Home() {
   const [event, setEvent] = useState<Event[]>()
   const [people, setPeople] = useState<familyImage[]>()
   const [deletePeopleModal, setDeletePeopleModal] = useState<boolean>()
+  const [ppImg, setPpimg] = useState<string>('')
   
 
   const verifyoken = async (token: any) => {
@@ -153,10 +154,12 @@ export default function Home() {
         data: {
           email:userData.email,
           name:modalName,
+          ppImg:ppImg,
+
         }
         
       })
-      console.log(response.data.message)
+      console.log('deletedTask',response.data.message)
       setDeletePeopleModal(false)
       fetchImages()
       
@@ -178,12 +181,13 @@ export default function Home() {
         <h2>Membre de la famille</h2>
         </div>
         <div className='tree'>
-        <div className='membersContainer'>
         <div className="membersContainer">
           {people && people.length > 0 ? (
             people.map((profil, index) => (
           <div key={index} className="memberCard">
-            <button className='imgButton' onClick={() => setModalName(profil.firstName)} ><img className='peopleImage' src={profil.base64} alt={profil.firstName} onClick={ () => {setShowModal(true)}} /></button>
+            <button className='imgButton' onClick={() => {setModalName(profil.firstName)
+              setPpimg(profil.base64)
+            }} ><img className='peopleImage' src={profil.base64} alt={profil.firstName} onClick={ () => {setShowModal(true)}} /></button>
             <p>{profil.firstName} {profil.name}</p>
       </div>
     ))
@@ -194,7 +198,6 @@ export default function Home() {
     </div>
   )}
 </div>
-        </div>
         </div>
       </div>
       {showModal && (

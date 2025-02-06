@@ -7,6 +7,7 @@ import axios from 'axios'
 import cross from 'public/crossMark.svg'
 import Image from 'next/image';
 import ClientLayout from '../ClientLayout'
+import { addItem, deleteArticle, fetchShoppingList } from 'src/utils/apiFunctions'
 
 export default function ShoppingListFunction () {
 
@@ -17,67 +18,35 @@ export default function ShoppingListFunction () {
     const handleKeyDownAddItem = (e: React.KeyboardEvent<HTMLInputElement>) => {
 
         if(e.key === 'Enter') {
-            addItem(e)
+            handleAddItem()
         }
     }
     
+ const handleAddItem = async () => {
+    try {
+       await addItem( userData.email,name)
+       fetchShoppingList(userData.email, setList,)
+    } catch (error) {
+        console.error("Erreur lors de l'ajout de l'article :", error);
+    } 
 
-    const addItem = async (e:any) => {
-        e.preventDefault()
+    
+ }
+    
+    const handleDeleteArticle = async (name:string) => {
         try {
-            const response: {data:Shopping} = await axios.post('api/uploadShoppingList', {
-               email: userData.email,
-               name: name
-            })
-            console.log("Article ajouté en BDD",response.data);
-                        
+            await deleteArticle(name, userData.email)
+            fetchShoppingList(userData.email, setList)
         } catch (error) {
-            console.log("Erreur lors de l'envoi de l'article");
-            
+            console.error("Erreur lors de la suppression de l'article :", error);
         }
         
-        
+              
     }
-    const deleteArticle = async (name:string) => {
-
-        console.log("Article supprimé", name);
-
-        try {
-            const response = await axios.delete('api/deleteShoppingList', {
-                data: {
-                    email: userData.email, 
-                    name:name
-                }
-            });
+    
+    useEffect( () => {    
             
-            
-        } catch (error) {
-            console.error("Erreur lors de la suppression de l'article");
-            
-        }
-    }
-    const fetchShoppingList = async () => {
-                        
-        try {
-            const response: {data: Shopping[]} = await axios.get('api/shopping',{
-                params: {email:userData.email},
-            });
-            const itemFetched: Shopping[] = response.data
-            console.log('Liste de courses',itemFetched);
-            
-            // On met ensuite a jour l'état de la liste des articles et on les déstructures avec comme couple clé/valeur,
-            setList(itemFetched.map(article => ({
-                name:article.name
-            })))
-            
-            
-
-        } catch (error) {
-            console.error('Erreur lors de la récupération de la liste: Email manquant')
-        }
-    }
-    useEffect( () => {        
-        fetchShoppingList()        
+        fetchShoppingList(userData.email, setList)        
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[]);
     return(
@@ -94,7 +63,7 @@ export default function ShoppingListFunction () {
 
             }} 
             onKeyDown={handleKeyDownAddItem}/>
-            <button className='addShoppingItemButton' onClick={addItem} >Ajouter</button>
+            <button className='addShoppingItemButton' onClick={handleAddItem} >Ajouter</button>
         </div>
         <div className='shoppingList'>
         {list.length > 0 ? (            
@@ -103,7 +72,7 @@ export default function ShoppingListFunction () {
         <p>{`${list.name}`}</p>
         <button
           className="done"
-          onClick={() => deleteArticle(list.name)}
+          onClick={()=> handleDeleteArticle(list.name)}
         >
           <Image className="crossImage" src={cross} alt="Supprimer" />
         </button>

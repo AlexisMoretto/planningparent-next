@@ -10,9 +10,10 @@ import ClientLayout from "../ClientLayout";
 import axios from "axios";
 import { userStore } from "../store/store";
 import { Meal } from "@prisma/client";
+import { addMeal, deleteMeal, fetchMeal } from "src/utils/apiFunctions";
 
 // Définition du type pour les événements
-interface FrontMeal {
+interface FrontMeal  {
   title: string;
   start: string; // Date/heure au format ISO
 }
@@ -36,40 +37,13 @@ export default function MealPage() {
     setShowModalAddMeal(true); // Affiche la modal
   };
 
-  const addMeal = async () => {
-    if (mealName) {
-      const newMeal = {
-        title: mealName,
-        start: `${clickedDate}T00:00:00`, // Heure complète au format ISO
-      };
-      
-      
-      try {
-        console.log('Donnée à envoyer: Email', userData.email, 'mealName:', mealName,'mealDate :', clickedDate, );
-        
-        const response: {data: Meal} = await axios.post('/api/meal', {
-          name:mealName,
-          mealDate:clickedDate,
-          email:userData.email
-        })
-        const mealFromBDD:Meal = response.data
-        console.log('mealFromBDD', mealFromBDD);
-                
-      } catch (error: any) {
-        console.error('Erreur lors de l\'envoi de l\'événement :', error.response?.data || error.message);
-      }
-      
-      setMeals([...meals, newMeal]); // Ajoute le nouvel événement
-      setMealName("");
-      setShowModalAddMeal(false); // Ferme la modal
-    } else {
-      alert("Veuillez remplir tous les champs.");
-    }
-  };
+  const handleAddMeal = () => {
+    addMeal (userData.email, mealName,clickedDate,setMealName, meals, setMeals, setShowModalAddMeal)
+  }
 
   const handleKeyDownValidate = (e: any) => {
     if (e.key === "Enter") {
-      addMeal();
+      handleAddMeal();
     }
   };
 
@@ -83,49 +57,12 @@ export default function MealPage() {
     setShowModalDeleteMeal(true); // Affiche la modal de suppression
   };
 
-  const deleteMeal = async (mealTitle: string) => {
-    try {
-      const response = await axios.delete('/api/meal', {
-        data: { email: userData.email, name: mealTitle }
-      });
-  
-      console.log("Repas supprimé:", response.data);
-  
-      // Mettre à jour l'état des repas
-      setMeals((prevMeals) =>
-        prevMeals.filter((meal) => meal.title !== mealTitle)
-      );
-  
-      setShowModalDeleteMeal(false);
-      setSelectedMeal(null);
-    } catch (error) {
-      console.error("Erreur lors de la suppression du repas", error);
-    }
-  };
-  const fetchMeal = async () => {
-    try {
-      const response :{data:Meal[]} = await axios.get('/api/meal', {
-        params: {email:userData.email},
-      })
-      const mealFetched: Meal[] = response.data
-      console.log("MealFetched", mealFetched);
-      
-      setMeals(
-        mealFetched.map((event) => ({
-          title:event.name,
-          start: `${event.mealDate}`,
-        }))
-      )
-      console.log("État Meals après setMeals :", meals);
-      console.log("Événements affichés dans FullCalendar :", meals);
-
-    } catch (error) {
-      console.error('Erreur lors de la récupération des événement');
-      
-    }
+  const handleDeleteMeal =  (mealTitle:string) => {
+    deleteMeal(userData, mealName, mealTitle, setMeals, setShowModalDeleteMeal,setSelectedMeal)
   }
+  
   useEffect(() => {
-    fetchMeal()
+    fetchMeal(userData.email, setMeals, meals)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
 
@@ -151,7 +88,7 @@ export default function MealPage() {
                 value={mealName}
                 onChange={(e) => setMealName(e.target.value)}
               />
-              <button type="submit" onClick={addMeal}>
+              <button type="submit" onClick={handleAddMeal}>
                 Valider
               </button>
               <button onClick={handleCancel}>Annuler</button>
@@ -164,7 +101,7 @@ export default function MealPage() {
               Voulez-vous supprimer l&apos;évènement &quot;{selectedMeal?.event.title}&quot; ?
             </div>
             <div className="deleteEventButton">
-              <button onClick={() => deleteMeal(selectedMeal?.event.title)}>Supprimer le repas</button>
+              <button onClick={() => handleDeleteMeal(selectedMeal?.event.title)}>Supprimer le repas</button>
               <button onClick={handleCancel}>Annuler</button>
             </div>
           </div>

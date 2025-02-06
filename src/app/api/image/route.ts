@@ -86,9 +86,11 @@ export async function POST(req: Request) {
 export async function DELETE (req:Request) {
 
   const body = await req.json();
-  const {email, name} = body;
+  const {email, name, ppImg} = body;
 
-  if(!email || !name) {
+  if(!email || !name || !ppImg) {
+
+    console.log('email, name, ppImg:', email, name, ppImg)
       return NextResponse.json("Element manquant pour la suppression")
   }
 
@@ -96,13 +98,12 @@ export async function DELETE (req:Request) {
       const deletePeople = await prisma.familyImage.deleteMany ({
           where: {
             name:name,
+            email:email,
+            base64:ppImg
           }
 
       })
-      return NextResponse.json(
-        {message: "Personne supprimé de la BDD"}, 
-        {status: 200}
-      )
+      return NextResponse.json(deletePeople)
   } catch (error) {
       return NextResponse.json(
           {message: "Erreur lors de la suppression coté back"},

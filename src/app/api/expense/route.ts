@@ -1,32 +1,41 @@
 import { Expense, PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
 
-const prisma = new PrismaClient;
+const prisma = new PrismaClient();
 
 export async function DELETE(request:Request) {
 
-    const body = await request.json();
-    const {reason, email} = body
-
-    if (!email && !reason) {
-        console.log('email,reason', email, reason);
-        
-        return NextResponse.json(
-            {message: "Email et raison requis"},
-            {status:400}
-        )
-    }
     try {
+        const body = await request.json();
+        const {reason, email} = body
+        console.log("Données reçues dans la requête DELETE :", { reason, email });
 
+        
+        if (!email || !reason) {
+            console.log('email,reason', email, reason);
+            
+            return NextResponse.json(
+                {message: "Email et raison requis"},
+                {status:400}
+            )
+        }
+        const existingExpense = await prisma.expense.findMany({
+            where: {
+                reason: reason,
+                email: email,
+            }
+        });
+        console.log("Dépenses trouvées avant suppression :", existingExpense);
         const deleteExpense = await prisma.expense.deleteMany({
             where: {
                 reason:reason,
                 email:email,
-
             }
         })
+        console.log("Résultat de la suppression Prisma :", deleteExpense);
         return NextResponse.json(
-            { message: "Dépense supprimée avec succès" }
+            { message: "Dépense supprimée avec succès" },
+            {status:200}
         );
         
     } catch (error) {
@@ -72,6 +81,8 @@ export async function GET(request:Request) {
 }
 
 export async function POST(req:Request) {
+
+    // Onn créer un budget ou on le met a jour
 
     try { 
 

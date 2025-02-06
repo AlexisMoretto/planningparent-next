@@ -10,6 +10,7 @@ import ClientLayout from "../ClientLayout";
 import axios from "axios";
 import { userStore } from "../store/store";
 import { Event } from "@prisma/client";
+import { addEvent, deleteEvent, fetchEvent } from "src/utils/apiFunctions";
 
 // Définition du type pour les événements
 interface FrontEvent {
@@ -39,43 +40,13 @@ export default function Meeting() {
     setShowModalAddEvent(true); // Affiche la modal
   };
 
-  const addEvent = async () => {
-    if (eventName && eventTime) {
-      const newEvent = {
-        title: eventName,
-        start: `${clickedDate}T${eventTime}:00`, // Format ISO requis par FullCalendar
-      };
-      
-      
-      try {
-        console.log('Donnée à envoyer: Email', userData.email, 'eventName:', eventName,'eventDate :', clickedDate, 'EventTime:',eventTime);
-        
-        const response: {data: Event} = await axios.post('/api/event', {
-          eventName,
-          eventTime,
-          eventDate:clickedDate,
-          email:userData.email,
-          nameConcerned,
-        })
-        const eventFromBDD:Event = response.data
-        console.log('eventFromBDD', eventFromBDD);
-                
-      } catch (error: any) {
-        console.error('Erreur lors de l\'envoi de l\'événement :', error.response?.data || error.message);
-      }
-      
-      setEvents([...events, newEvent]); // Ajoute le nouvel événement
-      setEventName("");
-      setEventTime("");
-      setShowModalAddEvent(false); // Ferme la modal
-    } else {
-      alert("Veuillez remplir tous les champs.");
-    }
-  };
+  const handleAddEvent = () => {
+    addEvent(userData.email, eventName,eventTime, events, clickedDate,nameConcerned,setEvents, setEventName,setEventTime, setShowModalAddEvent)
+  }
 
   const handleKeyDownValidate = (e: any) => {
     if (e.key === "Enter") {
-      addEvent();
+      handleAddEvent();
     }
   };
 
@@ -85,58 +56,20 @@ export default function Meeting() {
   };
 
   const handleEventClick = (clickInfo: any) => {
+    console.log("Événement cliqué :", clickInfo);
+
     setSelectedEvent(clickInfo); // Stocke l'événement cliqué dans selectedEvent
+    setEventName(clickInfo.event.title);
+    setNameConcerned(clickInfo.event.extendedProps?.nameConcerned || '')
     setShowModalDeleteEvent(true); // Affiche la modal de suppression
   };
 
-  const deleteEvent = async (eventTitle: string) => {
-    try {
-      const response = await axios.delete('/api/event', {
-        data : {
-          email: userData.email,
-          eventName: eventTitle,
-          nameConcerned:nameConcerned
-        }
-      })
-      console.log("Evenement supprimé", response.data);
-      
-    } catch (error) {
-      console.log("Erreur lors de la suppression de l'event", error);
-      
-    }
-    
-      setEvents((prevEvents) =>
-        prevEvents.filter((event) => event.title !== eventTitle)
-      );
-      selectedEvent.event.remove();
-      setShowModalDeleteEvent(false);
-      setSelectedEvent(null);
-    
-  };
-  const fetchEvent = async () => {
-    try {
-      const response :{data:Event[]} = await axios.get('/api/event', {
-        params: {email:userData.email},
-      })
-      const eventFetched: Event[] = response.data
-      console.log("eventFetched", eventFetched);
-      
-      setEvents(
-        eventFetched.map((event) => ({
-          title:event.eventName,
-          start: `${event.eventDate}`,
-        }))
-      )
-      console.log("État events après setEvents :", events);
-      console.log("Événements affichés dans FullCalendar :", events);
-
-    } catch (error) {
-      console.error('Erreur lors de la récupération des événement');
-      
-    }
+  const handleDeleteEvent = () => {
+    deleteEvent(userData.email, eventName, nameConcerned,setEvents, selectedEvent,setShowModalDeleteEvent, setSelectedEvent,)
   }
+  
   useEffect(() => {
-    fetchEvent()
+    fetchEvent(userData.email, setEvents,events)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
 
@@ -173,7 +106,7 @@ export default function Meeting() {
               placeholder="Personne concerné"
               onChange={(e) => setNameConcerned(e.target.value)}
                />
-              <button type="submit" onClick={addEvent}>
+              <button type="submit" onClick={handleAddEvent}>
                 Valider
               </button>
               <button onClick={handleCancel}>Annuler</button>
@@ -186,7 +119,7 @@ export default function Meeting() {
               Voulez-vous supprimer l&apos;évènement &quot;{selectedEvent?.event.title}&quot; ?
             </div>
             <div className="deleteEventButton">
-              <button onClick={() => deleteEvent(selectedEvent?.event.title)}>Supprimer l&apos;événement</button>
+              <button onClick={() => handleDeleteEvent()}>Supprimer l&apos;événement</button>
               <button onClick={handleCancel}>Annuler</button>
             </div>
           </div>

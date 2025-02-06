@@ -8,72 +8,35 @@ import axios from 'axios';
 import type { Budget, Expense } from '@prisma/client';
 import { userStore } from '../store/store';
 import ClientLayout from '../ClientLayout';
+import { deleteExpense, fetchBudgetAmount, fetchExpense, validateAmountBudget, validateExpense } from 'src/utils/apiFunctions';
 
 export default function BudgetGlobal() {
-  const [budgetAmount, setBudgetAmount] = useState<number | undefined>(0);
+  const [budgetAmount, setBudgetAmount] = useState<number>(0);
   const [showInputbudgetAmount, setShowInputbudgetAmount] = useState(false);
   const [showExpenseInput, setShowExpenseInput] = useState(false);
   const [reason, setReason] = useState<string>('');
-  const [expense, setExpense] = useState<number | undefined>(0);
+  const [expense, setExpense] = useState<number>(0);
   const [expenses, setExpenses] = useState<{ reason: string; amount: number }[]>([]);
   const userData = userStore.getState();
   const [displayTotal, setDisplayTotal] = useState<number>(0);
 
   // Ajout du montant du budget
-  const validateAmountBudget = async (e: any) => {
-    e.preventDefault();
-    setShowInputbudgetAmount(false);
-    try { 
-      const response = await axios.post('/api/budget', {
-        budget: budgetAmount,
-        email: userData.email,
-      });
-      console.log('Response from /api/budget', response.data);
-    } catch (error) {
-      console.error("Erreur lors de l'envoi du Budget Prévu");
-    }
-  };
-
+  
+const handleValidateBudget = (e:any) => {
+  e.preventDefault();
+  validateAmountBudget(budgetAmount,userData.email,setShowInputbudgetAmount,setBudgetAmount)
+}
   // Ajout d'une dépense
-  const validateExpense = async (e: any) => {
+  const handleValidateExpense = (e: any) => {
     e.preventDefault();
-    if (expense && reason) {
-      const newExpense = { reason, amount: expense };
-
-      try {
-        const response = await axios.post('/api/expense', {
-          expense,
-          reason,
-          email: userData.email,
-        });
-        console.log('UploadedExpense', response.data);
-
-        // Mise à jour de la liste des dépenses
-        setExpenses(prevExpenses => [...prevExpenses, newExpense]);
-      } catch (error) {
-        console.error("Erreur lors de l'envoi des dépenses");
-      }
-
-      setReason('');
-      setExpense(0);
-      setShowExpenseInput(false);
-    }
+    validateExpense(expense, reason, userData.email, setExpenses, setExpense, setReason, setShowExpenseInput);
   };
-
-  // Suppression d'une dépense
-  const deleteExpense = async (reasonToDelete: string) => {
-    try {
-      const response = await axios.delete('/api/expense', {
-        data: { email: userData.email, reason: reasonToDelete },
-      });
-      console.log('Dépense supprimée :', response.data);
-
-      // Mise à jour des dépenses après suppression
-      setExpenses(prevExpenses => prevExpenses.filter(exp => exp.reason !== reasonToDelete));
-    } catch (error) {
-      console.error("Erreur lors de la suppression de la dépense", error);
-    }
-  };
+  
+ // Supprimer une dépense
+  const handleDeleteExpense = (reason: string) => {   
+    deleteExpense( reason,userData.email, setExpenses)
+    
+  }
 
   useEffect(() => {
     const newTotalExpense = expenses.reduce((acc, curr) => acc + curr.amount, 0);
@@ -81,38 +44,21 @@ export default function BudgetGlobal() {
   }, [budgetAmount, expenses]);
 
   // Récupération des dépenses depuis la base de données
-  useEffect(() => {
-    const fetchExpense = async () => {
-      try {
-        const response = await axios.get('/api/expense', {
-          params: { email: userData.email },
-        });
-        const expensesFetched = response.data;
-        setExpenses(expensesFetched.map((exp: { reason: any; expense: any; }) => ({ reason: exp.reason, amount: exp.expense })));
-      } catch (error) {
-        console.error('Erreur lors de la récupération des dépenses', error);
-      }
-    };
+  useEffect(()=> {
+    if(userData.email) {
+      fetchExpense( userData.email , setExpenses);
+    }
+    
 
-    fetchExpense();
-  }, [userData.email]);
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[userData.email])
+    
   // Récupération du budget depuis la base de données
   useEffect(() => {
-    const fetchBudgetAmount = async () => {
-      try {
-        const response = await axios.get('/api/budget', {
-          params: { email: userData.email },
-        });
-        const fetchedBudget = response.data;
-        console.log('fetchedBudget', fetchedBudget);
-        setBudgetAmount(fetchedBudget.budget);
-      } catch (error) {
-        console.error("Erreur lors de la récupération du budget");
-      }
-    };
-
-    fetchBudgetAmount();
+    if (userData.email) {
+      fetchBudgetAmount(userData.email, setBudgetAmount);
+    }
+    
   }, [userData.email]);
 
   return (
@@ -134,7 +80,7 @@ export default function BudgetGlobal() {
                     placeholder="Montant"
                     onChange={(event) => setBudgetAmount(event.currentTarget.valueAsNumber)}
                   />
-                  <button className="done" onClick={validateAmountBudget}>
+                  <button className="done" onClick={handleValidateBudget}>
                     <Image className="checkImage" src={check} alt="check" />
                   </button>
                 </div>
@@ -162,7 +108,7 @@ export default function BudgetGlobal() {
                     value={reason}
                     onChange={(event) => setReason(event.currentTarget.value)}
                   />
-                  <button className="done" onClick={validateExpense}>
+                  <button className="done" onClick={handleValidateExpense}>
                     <Image className="checkImage" src={check} alt="check" />
                   </button>
                 </div>
@@ -174,7 +120,7 @@ export default function BudgetGlobal() {
                 expenses.map((expense, index) => (
                   <div key={index} className="expenseDiv">
                     <p>{`${expense.reason}: ${expense.amount} €`}</p>
-                    <button className="done" onClick={() => deleteExpense(expense.reason)}>
+                    <button className="done" onClick={() => handleDeleteExpense(expense.reason)}>
                       <Image className="crossImage" src={cross} alt="Supprimer" />
                     </button>
                   </div>

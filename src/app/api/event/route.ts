@@ -6,13 +6,14 @@ const prisma = new PrismaClient;
 export async function DELETE(request:Request) {
 
     const body = await request.json();
-    const {eventName, email} = body
-
-    if (!email && !eventName) {
-        console.log('email,eventName', email, eventName);
+    const {eventName, email, nameConcerned} = body
+    console.log("corps de la requete: ", body);
+    
+    if (!email || !eventName || !nameConcerned) {
+        console.log('email,eventName, nameCOncerned', email, eventName, nameConcerned);
         
         return NextResponse.json(
-            {message: "Email et raison requis"},
+            {message: "email,eventName, nameCOncerned requis"},
             {status:400}
         )
     }
@@ -22,7 +23,7 @@ export async function DELETE(request:Request) {
             where: {
                 eventName,
                 email:email,
-
+                nameConcerned
             }
         })
         return NextResponse.json(
@@ -77,7 +78,7 @@ export async function POST(req:Request) {
         const body = await req.json();
 
         const {eventName, eventTime,eventDate, email, nameConcerned }: Event = body
-
+        
         if(!eventName||!eventTime||!email||!eventDate) {
             return NextResponse.json(
                 {message : 'Tous les champs sont requis pour l\'envoi des données'},
@@ -87,6 +88,7 @@ export async function POST(req:Request) {
             console.log('vérification des données reussi', eventName, email, eventTime, eventDate); 
             
         }
+        console.log("Corps de la requete: ", eventName, eventTime,eventDate, email, nameConcerned );
 
         const newEvent = await prisma.event.create({
             data: {
@@ -108,3 +110,6 @@ export async function POST(req:Request) {
                 )
     }
 }
+
+
+
