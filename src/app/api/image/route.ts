@@ -1,18 +1,18 @@
-import { PrismaClient } from "@prisma/client";
+import { familyImage, PrismaClient } from "@prisma/client";
 import { error } from "console";
 import { NextResponse } from "next/server";
 import { userStore } from "src/app/store/store";
 
-const prisma = new PrismaClient()
+const prisma : PrismaClient= new PrismaClient()
 
 export async function GET(request: Request) {
 
     // On viens chercher dans l'url l'email envoyé en param par le front 
     // searchParams est une propriété de l'objet URL. Elle permet d'extraire les paramètres présent dans l'url de la requete (après le ?) car le front envoi les paramètres dans l'url
-    const { searchParams } = new URL(request.url);
+    const { searchParams }: URL = new URL(request.url);
 
     // On peut donc récupérer l'eamil via la méthode .get 
-    const email = searchParams.get('email'); 
+    const email: string = searchParams.get('email') as string; 
 
     if (!email) {
         return NextResponse.json(
@@ -23,7 +23,7 @@ export async function GET(request: Request) {
 
     try{
         // On récupère toutes les images de la BDD
-        const familyImage = await prisma.familyImage.findMany({
+        const familyImage: familyImage[] = await prisma.familyImage.findMany({
             where: {
                 email: email           
             }
@@ -43,9 +43,9 @@ export async function GET(request: Request) {
 }
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    const body:familyImage = await req.json();
 
-    const {name, email, base64, firstName, mimeType } = body;
+    const {name, email, base64, firstName, mimeType }: familyImage = body;
 
     // Vérification des données requises
     if (!email || !base64 || !firstName || !name || !mimeType) {
@@ -62,7 +62,7 @@ export async function POST(req: Request) {
     }
 
     // Enregistrer dans la base de onnées avec les données envoyé par le front, les données utilisateur via le reducer et le format de l'image via la variable base64
-    const newFamilyImage = await prisma.familyImage.create({
+    const newFamilyImage: familyImage = await prisma.familyImage.create({
       data: {
         email,
         base64,
@@ -85,21 +85,21 @@ export async function POST(req: Request) {
 }
 export async function DELETE (req:Request) {
 
-  const body = await req.json();
-  const {email, name, ppImg} = body;
+  const body: familyImage = await req.json();
+  const {email, name, base64}: familyImage = body;
 
-  if(!email || !name || !ppImg) {
+  if(!email || !name || !base64) {
 
-    console.log('email, name, ppImg:', email, name, ppImg)
+    console.log('email, name, ppImg:', email, name, base64)
       return NextResponse.json("Element manquant pour la suppression")
   }
 
   try {
-      const deletePeople = await prisma.familyImage.deleteMany ({
+      const deletePeople: {count:number}= await prisma.familyImage.deleteMany ({
           where: {
             name:name,
             email:email,
-            base64:ppImg
+            base64:base64
           }
 
       })

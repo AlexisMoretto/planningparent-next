@@ -1,9 +1,9 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, User } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
 import { NextRequest, NextResponse } from 'next/server';
 
-const prisma = new PrismaClient();
+const prisma: PrismaClient = new PrismaClient();
 
 export async function POST(req: NextRequest, res: NextResponse) {
   if (req.method === 'POST') {
@@ -15,10 +15,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
         return NextResponse.json({message : "Elément manquant"})
     } 
     // Fonction asynchrone pour générer le salt et le mdp
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt)
+    const salt: string = await bcrypt.genSalt(10);
+    const hashedPassword: string = await bcrypt.hash(password, salt)
 
-      const newUser = await prisma.user.create({
+      const newUser: User = await prisma.user.create({
         data: {
           name: name,
           firstName: firstName,

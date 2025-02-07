@@ -1,13 +1,13 @@
 import { Expense, PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
 
-const prisma = new PrismaClient();
+const prisma: PrismaClient = new PrismaClient();
 
 export async function DELETE(request:Request) {
 
     try {
-        const body = await request.json();
-        const {reason, email} = body
+        const body: Expense = await request.json();
+        const {reason, email}: Expense = body
         console.log("Données reçues dans la requête DELETE :", { reason, email });
 
         
@@ -19,14 +19,9 @@ export async function DELETE(request:Request) {
                 {status:400}
             )
         }
-        const existingExpense = await prisma.expense.findMany({
-            where: {
-                reason: reason,
-                email: email,
-            }
-        });
-        console.log("Dépenses trouvées avant suppression :", existingExpense);
-        const deleteExpense = await prisma.expense.deleteMany({
+        
+      
+        const deleteExpense: {count:number} = await prisma.expense.deleteMany({
             where: {
                 reason:reason,
                 email:email,
@@ -50,9 +45,9 @@ export async function DELETE(request:Request) {
 }
 
 export async function GET(request:Request) {
-     const { searchParams } = new URL(request.url)
+     const { searchParams }: URL = new URL(request.url)
 
-    const email = searchParams.get('email'); 
+    const email: string = searchParams.get('email')as string; 
 
     if(!email){
         return NextResponse.json(
@@ -62,7 +57,7 @@ export async function GET(request:Request) {
     }
     try {
 
-        const expense = await prisma.expense.findMany({
+        const expense: Expense[] = await prisma.expense.findMany({
             where:{email:email}
         })
 
@@ -86,9 +81,9 @@ export async function POST(req:Request) {
 
     try { 
 
-        const body = await req.json();
+        const body:Expense = await req.json();
 
-        const {expense, email, reason} = body
+        const {expense, email, reason}: Expense = body
 
         if(!expense||!email||!reason){
             return NextResponse.json(
@@ -99,7 +94,7 @@ export async function POST(req:Request) {
             console.log('vérification des expense reussi', expense, email, reason);           
         }
 
-        const newExpense = await prisma.expense.create({
+        const newExpense: Expense = await prisma.expense.create({
             data: {
                 expense,
                 reason,

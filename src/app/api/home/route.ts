@@ -1,14 +1,14 @@
-import { Event, PrismaClient } from "@prisma/client";
+import { Event, PrismaClient, User } from "@prisma/client";
 import { NextResponse } from "next/server";
 
-const prisma = new PrismaClient()
+const prisma: PrismaClient = new PrismaClient()
 
 export async function GET(req:Request) {
     try {
-    const {searchParams} = new URL (req.url);
+    const {searchParams} :URL = new URL (req.url);
 
-    const email= searchParams.get('email')
-    const nameConcerned = searchParams.get('nameConcerned')
+    const email: string= searchParams.get('email') as string
+    const nameConcerned: string = searchParams.get('nameConcerned') as string
 
     console.log("Requête API - email:", email, "nameConcerned:", nameConcerned);
 
@@ -19,7 +19,7 @@ export async function GET(req:Request) {
         )
     }
     
-        const event = await prisma.event.findMany({
+        const event: Event[] = await prisma.event.findMany({
             where: {
                 email: email,
                 nameConcerned:nameConcerned

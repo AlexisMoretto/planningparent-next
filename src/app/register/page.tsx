@@ -9,21 +9,22 @@ import { userStore } from '../store/store'
 import { User } from '@prisma/client'
 
 
+
 export default function Register () {
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [name, setName] = useState('')
-    const [firstName, setFirstName] = useState('')
+    const [email, setEmail] = useState<string>('')
+    const [password, setPassword] = useState<string>('')
+    const [name, setName] = useState<string>('')
+    const [firstName, setFirstName] = useState<string>('')
 
     const router = useRouter();
 
-     const handleSubmit = async (event: { preventDefault: () => void }) => {
+     const handleSubmit: (event:any) => void = async (event) => {
         event.preventDefault()
 
         try {
             
-            const response = await axios.post('/api/register', {email, password, name, firstName} as User)
+            const response: {data: User} = await axios.post('/api/register', {email, password, name, firstName})
 
             // Vérification d'envoie
 

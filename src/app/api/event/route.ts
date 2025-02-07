@@ -1,12 +1,12 @@
 import { Event,  PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
 
-const prisma = new PrismaClient;
+const prisma: PrismaClient = new PrismaClient;
 
 export async function DELETE(request:Request) {
 
-    const body = await request.json();
-    const {eventName, email, nameConcerned} = body
+    const body: Event = await request.json();
+    const {eventName, email, nameConcerned}: Event = body
     console.log("corps de la requete: ", body);
     
     if (!email || !eventName || !nameConcerned) {
@@ -19,7 +19,7 @@ export async function DELETE(request:Request) {
     }
     try {
 
-        const deleteExpense = await prisma.event.deleteMany({
+        const deleteExpense: {count:number} = await prisma.event.deleteMany({
             where: {
                 eventName,
                 email:email,
@@ -44,8 +44,8 @@ export async function DELETE(request:Request) {
 
 export async function GET(req: Request) {
 
-    const {searchParams} = new URL(req.url);
-    const email = searchParams.get('email')
+    const {searchParams}: URL = new URL(req.url);
+    const email:string = searchParams.get('email') as string
 
     if(!email) {
         return NextResponse.json(
@@ -54,7 +54,7 @@ export async function GET(req: Request) {
         )
     }
     try {
-        const events = await prisma.event.findMany({
+        const events: Event[] = await prisma.event.findMany({
             where:{
                 email:email
             }
@@ -75,7 +75,7 @@ export async function GET(req: Request) {
 export async function POST(req:Request) {
     try {
 
-        const body = await req.json();
+        const body: Event = await req.json();
 
         const {eventName, eventTime,eventDate, email, nameConcerned }: Event = body
         
@@ -90,7 +90,7 @@ export async function POST(req:Request) {
         }
         console.log("Corps de la requete: ", eventName, eventTime,eventDate, email, nameConcerned );
 
-        const newEvent = await prisma.event.create({
+        const newEvent: Event = await prisma.event.create({
             data: {
                 nameConcerned,
                 eventName, 

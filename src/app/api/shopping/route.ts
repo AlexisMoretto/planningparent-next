@@ -2,11 +2,11 @@ import { PrismaClient, Shopping } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 
-const prisma = new PrismaClient()
+const prisma: PrismaClient = new PrismaClient()
 
 export async function DELETE (req: Request) {
-    const body = await req.json()
-    const {email, name} = body
+    const body: Shopping = await req.json()
+    const {email, name}: Shopping = body
     console.log(email, name);
     
     if(!email && !name) {
@@ -18,7 +18,7 @@ export async function DELETE (req: Request) {
     } 
     try {
         
-        const deleteArticle = await prisma.shopping.deleteMany({
+        const deleteArticle: {count:number} = await prisma.shopping.deleteMany({
             where: {
                 name:name,
                 email: email
@@ -39,9 +39,9 @@ export async function DELETE (req: Request) {
     }
 }
 export async function GET(request:Request) {
-     const { searchParams } = new URL(request.url)
+     const { searchParams }: URL = new URL(request.url)
 
-    const email = searchParams.get('email'); 
+    const email: string = searchParams.get('email') as string; 
     
     if(!email){
         return NextResponse.json(
@@ -51,7 +51,7 @@ export async function GET(request:Request) {
     }
     try {
 
-        const shoppingList = await prisma.shopping.findMany({
+        const shoppingList: Shopping[] = await prisma.shopping.findMany({
             where:{email:email}
         })
 
@@ -72,7 +72,7 @@ export async function POST(req:Request) {
 
     try { 
 
-        const body = await req.json();
+        const body: Shopping = await req.json();
 
         const {name, email}: Shopping = body
 
@@ -85,7 +85,7 @@ export async function POST(req:Request) {
             console.log('vérification des informations reussi', name, email);           
         }
 
-        const newArticle = await prisma.shopping.create({
+        const newArticle: Shopping = await prisma.shopping.create({
             data: {
                 name,
                 email

@@ -1,4 +1,5 @@
-import { ACTIONS, User } from "../@types";
+import { User } from "@prisma/client";
+import { ACTIONS } from "../@types";
 
 
 

@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import ClientLayout from "../ClientLayout";
 import axios from "axios";
 import { userStore } from "../store/store";
-import { Event } from "@prisma/client";
+import { Event, User } from "@prisma/client";
 import { addEvent, deleteEvent, fetchEvent } from "src/utils/apiFunctions";
 
 // Définition du type pour les événements
@@ -19,7 +19,7 @@ interface FrontEvent {
 }
 
 export default function Meeting() {
-  const userData = userStore.getState()
+  const userData: User = userStore.getState()
   const [showModalAddEvent, setShowModalAddEvent] = useState<boolean>(false);
   const [showModalDeleteEvent, setShowModalDeleteEvent] = useState<boolean>(false);
   const [eventName, setEventName] = useState<string>(""); 
@@ -31,31 +31,31 @@ export default function Meeting() {
   const [events, setEvents] = useState<FrontEvent[]>([]); 
   const [selectedEvent, setSelectedEvent] = useState<any>(null); // Pour garder une référence à l'événement cliqué
 
-  const handleDateClick = (info: any) => {
+  const handleDateClick:(info:any) => void = (info) => {
 
     
-    const selectedDate = info.date.toLocaleDateString('fr-CA');
+    const selectedDate: string = info.date.toLocaleDateString('fr-CA');
  // Extrait uniquement la date au format "YYYY-MM-DD"
     setClickedDate(selectedDate); // Stocke la date cliquée
     setShowModalAddEvent(true); // Affiche la modal
   };
 
-  const handleAddEvent = () => {
+  const handleAddEvent:() => void = () => {
     addEvent(userData.email, eventName,eventTime, events, clickedDate,nameConcerned,setEvents, setEventName,setEventTime, setShowModalAddEvent)
   }
 
-  const handleKeyDownValidate = (e: any) => {
+  const handleKeyDownValidate: (e:any) => void = (e) => {
     if (e.key === "Enter") {
       handleAddEvent();
     }
   };
 
-  const handleCancel = () => {  
+  const handleCancel:() => void = () => {  
     setShowModalDeleteEvent(false);
     setShowModalAddEvent(false)
   };
 
-  const handleEventClick = (clickInfo: any) => {
+  const handleEventClick:(clickInfo:any) => void = (clickInfo) => {
     console.log("Événement cliqué :", clickInfo);
 
     setSelectedEvent(clickInfo); // Stocke l'événement cliqué dans selectedEvent
@@ -64,7 +64,7 @@ export default function Meeting() {
     setShowModalDeleteEvent(true); // Affiche la modal de suppression
   };
 
-  const handleDeleteEvent = () => {
+  const handleDeleteEvent:() => void = () => {
     deleteEvent(userData.email, eventName, nameConcerned,setEvents, selectedEvent,setShowModalDeleteEvent, setSelectedEvent,)
   }
   

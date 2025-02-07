@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { FormEventHandler, useRef, useState } from "react";
 import { imgStore, userStore } from "../store/store";
 import axios from 'axios';
-import { familyImage } from '@prisma/client';
+import { familyImage, User } from '@prisma/client';
 import ClientLayout from '../ClientLayout';
 
 
@@ -13,10 +13,10 @@ export default function AddMember () {
 
     const router = useRouter()
     const inputFileRef = useRef<HTMLInputElement>(null);
-    const userData = userStore.getState()
-    const imageData = imgStore.getState()
-    const [name, setName] = useState('')
-    const [firstName, setFirstName] = useState('')
+    const userData: User = userStore.getState()
+    const imageData: familyImage = imgStore.getState()
+    const [name, setName] = useState<string>('')
+    const [firstName, setFirstName] = useState<string>('')
     // Encoder l'image en base64
 
   const uploadImage: FormEventHandler<HTMLFormElement> = async (e) => {
@@ -29,14 +29,14 @@ export default function AddMember () {
   
     const file: File = inputFileRef.current.files[0];
     console.log('File',file);
-    const mimeType = file.type;
+    const mimeType: string = file.type;
     
    
     try {
       // Fonction pour encoder l'image en Base64
       const encodeImageToBase64 = (file: File): Promise<string> => {
         return new Promise((resolve, reject) => {
-          const reader = new FileReader();
+          const reader: FileReader = new FileReader();
           
           reader.onload = () => {
             const result = reader.result as string;
@@ -54,29 +54,29 @@ export default function AddMember () {
       };
   
       // Encoder l'image en Base64
-      const base64 = await encodeImageToBase64(file);     
+      const base64: string = await encodeImageToBase64(file);     
           
   
       // Données supplémentaires pour Prisma
-      const email = userData.email     
+      const email: string = userData.email   
       
       // Maintenant qu'on a toutes nos Info on envoi a l'API
-      const response = await axios.post("/api/image", {
-        email:userData.email,
-        base64: base64,
-        name: name,
-        firstName: firstName,
-        mimeType: mimeType
+      const response: {data: familyImage} = await axios.post("/api/image", {
+        email:userData.email as string,
+        base64: base64 as string,
+        name: name as string,
+        firstName: firstName as string,
+        mimeType: mimeType as string
       });
       console.log(response);
       
-      const data = await response.data as familyImage;
+      const data: familyImage = await response.data;
 
       //On vide le formulaire au submit si l'upload à reussi
       
       if(data) {
-        const  uploadSucceed = document.querySelector('.uploadSucceed') as HTMLInputElement
-        const formReset = document.querySelector('.form') as HTMLFormElement
+        const  uploadSucceed: HTMLInputElement | null = document.querySelector('.uploadSucceed') 
+        const formReset: HTMLFormElement | null = document.querySelector('.form')
         
 
         if(!uploadSucceed){
@@ -93,12 +93,10 @@ export default function AddMember () {
       console.error("Erreur :", error);
     }    
   };   
-  const home = () => {
+  const home: () => void = () => {
     router.push('/home')
   }
   
-
-
     return(
         <ClientLayout>
         <div className='all'>

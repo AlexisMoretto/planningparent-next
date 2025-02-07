@@ -1,4 +1,4 @@
-import { Budget, Meal, Event, Shopping } from "@prisma/client";
+import { Budget, Meal, Event, Shopping, User, Expense } from "@prisma/client";
 import axios from "axios";
 import router from "next/router";
 import { SetStateAction } from "react";
@@ -7,21 +7,26 @@ import { getActionChangeUserData } from "src/app/actions/actions";
 import { userStore } from "src/app/store/store";
 
 
-const userData = userStore.getState();
+const userData: User = userStore.getState();
 
 
 // --------------BUDGET----------------
 // Onn créer un budget ou on le met a jour
-export const validateAmountBudget = async (
-    budgetAmount: number,
+export const validateAmountBudget: (
+  budgetAmount: number,
     email:string,
     setShowInputbudgetAmount:(value:boolean) => void,
     setBudgetAmount: (budgetAmount:number) => void
+) => void = async (
+    budgetAmount,
+    email,
+    setShowInputbudgetAmount,
+    setBudgetAmount
     ) => {
 
     setShowInputbudgetAmount(false);
     try { 
-      const response = await axios.post('/api/budget', {
+      const response: {data:Budget} = await axios.post('/api/budget', {
         budget: budgetAmount,
         email: userData.email,
       });
@@ -33,15 +38,18 @@ export const validateAmountBudget = async (
   };
 
 // Récuperer le budget de la BDD
-  export const fetchBudgetAmount = async (
+  export const fetchBudgetAmount : (
     email:string,
     setBudgetAmount:(budget:number) => void
+  )=> void = async (
+    email,
+    setBudgetAmount
 ) => {
         try {
-          const response = await axios.get('/api/budget', {
+          const response: {data: Budget} = await axios.get('/api/budget', {
             params: { email },
           });
-          const fetchedBudget = response.data;
+          const fetchedBudget: Budget = response.data;
           console.log('fetchedBudget', fetchedBudget);
           setBudgetAmount(fetchedBudget.budget);
         } catch (error) {
@@ -53,7 +61,7 @@ export const validateAmountBudget = async (
       // Ajouter une dépense en BDD
 
 
-      export const validateExpense = async (
+      export const validateExpense: (
         expense: number,
         reason: string,
         email: string,
@@ -61,6 +69,14 @@ export const validateAmountBudget = async (
         setExpense: React.Dispatch<React.SetStateAction<number>>,
         setReason: (reason: string) => void,
         setShowExpenseInput: (value: boolean) => void
+      ) => void = async (
+        expense,
+        reason,
+        email,
+        setExpenses,
+        setExpense,
+        setReason,
+        setShowExpenseInput,
         
     ) => {
 
@@ -68,7 +84,7 @@ export const validateAmountBudget = async (
           const newExpense = { reason, amount: expense };
     
           try {
-            const response = await axios.post('/api/expense', {
+            const response:{data: Expense} = await axios.post('/api/expense', {
               expense,
               reason,
               email,
@@ -95,7 +111,7 @@ export const validateAmountBudget = async (
     setExpenses:React.Dispatch<React.SetStateAction<{reason:string, amount:number}[]>>
 ) => {
     try {
-      const response = await axios.delete('/api/expense', {
+      const response: {data:Expense} = await axios.delete('/api/expense', {
         data: { email, reason: reasonToDelete },
       });
       console.log('Dépense supprimée :', response.data);
@@ -107,15 +123,18 @@ export const validateAmountBudget = async (
     }
   };
   // Récupération des dépensnes
- export const fetchExpense = async (
-    email:string,
+ export const fetchExpense: (
+  email:string,
     setExpenses:React.Dispatch<React.SetStateAction<{reason:string, amount:number}[]>>
+ ) => void =  async (
+    email,
+    setExpenses,
  ) => {
         try {
-          const response = await axios.get('/api/expense', {
+          const response: {data:Expense[]} = await axios.get('/api/expense', {
             params: { email },
           });
-          const expensesFetched = response.data;
+          const expensesFetched: Expense[] = response.data;
           setExpenses(expensesFetched.map((exp: { reason: any; expense: any; }) => ({ reason: exp.reason, amount: exp.expense })));
         } catch (error) {
           console.error('Erreur lors de la récupération des dépenses', error);
@@ -124,9 +143,12 @@ export const validateAmountBudget = async (
 
       // --------------- LOGIN ----------------
 
-      export const handleSubmit = async (
+      export const handleSubmit: (
         email:string,
         password:string,
+      )=> void  = async (
+        email,
+        password,
         
       ) => {
         
@@ -161,7 +183,7 @@ export const validateAmountBudget = async (
 
 
 // Ajouter un repas
-export const addMeal = async (
+export const addMeal: (
   email:string,
   mealName: string,
   clickedDate:string,
@@ -169,11 +191,19 @@ export const addMeal = async (
   meals: {title:string, start:string}[],
   setMeals: React.Dispatch<React.SetStateAction<{title:string, start:string}[]>>,
   setShowModalAddMeal:(value:boolean) => void,
+)=> void = async (
+  email,
+  mealName,
+  clickedDate,
+  setMealName,
+  meals,
+  setMeals,
+  setShowModalAddMeal,
 ) => {
   if (mealName) {
     const newMeal = {
-      title: mealName,
-      start: `${clickedDate}T00:00:00`, // Heure complète au format ISO
+      title: mealName as string,
+      start: `${clickedDate}T00:00:00` as string, // Heure complète au format ISO
     };
     
     
@@ -202,16 +232,23 @@ export const addMeal = async (
 
 // Supprimer un repas 
 
- export const deleteMeal = async (
+ export const deleteMeal: (
   email: string,
   meal:string,
   mealTitle: string,
   setMeals:React.Dispatch<React.SetStateAction<{title:string, start:string}[]>>,
   setShowModalDeleteMeal:(value:boolean) => void,
   setSelectedMeal:(value:null) => void,
+ ) => void = async (
+  email,
+  meal,
+  mealTitle,
+  setMeals,
+  setShowModalDeleteMeal,
+  setSelectedMeal,
 ) => {
   try {
-    const response = await axios.delete('/api/meal', {
+    const response: {data:Meal} = await axios.delete('/api/meal', {
       data: { email, name: mealTitle }
     });
 
@@ -230,10 +267,14 @@ export const addMeal = async (
 };
 
 // Récupération des repas 
-export const fetchMeal = async (
+export const fetchMeal: (
   email:string,
   setMeals: React.Dispatch<React.SetStateAction<{title:string, start:string}[]>>,
   meals:{title:string, start:string}[],
+) => void = async (
+  email,
+  setMeals,
+  meals,
 ) => {
   try {
     const response :{data:Meal[]} = await axios.get('/api/meal', {
@@ -259,7 +300,7 @@ export const fetchMeal = async (
 
 // --------------MEETING------------
 
-export const addEvent = async (
+export const addEvent: (
   email:string,
   eventName: string,
   eventTime: string,
@@ -270,12 +311,23 @@ export const addEvent = async (
   setEventName:(value:string) => void,
   setEventTime: (value:string) => void,
   setShowModalAddEvent: (value: boolean) => void,
+) => void = async (
+  email,
+  eventName,
+  eventTime,
+  events,
+  clickedDate,
+  nameConcerned,
+  setEvents,
+  setEventName,
+  setEventTime,
+  setShowModalAddEvent,
 
 ) => {
   if (eventName && eventTime) {
     const newEvent = {
-      title: eventName,
-      start: `${clickedDate}T${eventTime}:00`, // Format ISO requis par FullCalendar
+      title: eventName as string,
+      start: `${clickedDate}T${eventTime}:00` as string, // Format ISO requis par FullCalendar
     };
     
     
@@ -306,7 +358,7 @@ export const addEvent = async (
 };
 // Suppression des evts
 
-export const deleteEvent = async (
+export const deleteEvent: (
   email:string,
   eventTitle:string,
   nameConcerned:string,
@@ -314,9 +366,17 @@ export const deleteEvent = async (
   selectedEvent:any,
   setShowModalDeleteEvent:(value:boolean) => void,
   setSelectedEvent:(value:any) => void,
+) => void = async (
+  email,
+  eventTitle,
+  nameConcerned,
+  setEvents,
+  selectedEvent,
+  setShowModalDeleteEvent,
+  setSelectedEvent,
 ) => {
   try {
-    const response = await axios.delete('/api/event', {
+    const response: {data:Event} = await axios.delete('/api/event', {
       data : {
         email,
         eventName:eventTitle,
@@ -339,10 +399,14 @@ export const deleteEvent = async (
   
 };
 // Fetch Event
-export const fetchEvent = async (
+export const fetchEvent: (
   email:string,
   setEvents:React.Dispatch<React.SetStateAction<{title:string, start: string}[]>>,
   events: {title:string, start:string}[],
+) => void = async (
+  email,
+  setEvents,
+  events,
 
 
 ) => {
@@ -369,15 +433,18 @@ export const fetchEvent = async (
 }
 //-----------SHOPPING--------------------
 
-export const deleteArticle = async (
+export const deleteArticle: (
   name:string,
   email:string
+) => void = async (
+  name,
+  email,
 ) => {
 
   console.log("Article supprimé", name);
 
   try {
-      const response = await axios.delete('api/shopping', {
+      const response: {count:number} = await axios.delete('api/shopping', {
           data: {
               email, 
               name:name
@@ -391,9 +458,12 @@ export const deleteArticle = async (
   }
 }
 
-export const fetchShoppingList = async (
+export const fetchShoppingList: (
   email: string,
   setList: React.Dispatch<React.SetStateAction<{ name: string }[]>>,
+) => void = async (
+  email,
+  setList,
 ) => {
                         
         try {
@@ -415,9 +485,12 @@ export const fetchShoppingList = async (
         }
     }
 
-export const addItem = async (
+export const addItem: (
   email:string,
   name:string,
+) => void = async (
+  email,
+  name,
 ) => {
 
         try {

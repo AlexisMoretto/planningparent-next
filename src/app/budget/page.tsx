@@ -5,41 +5,42 @@ import check from '../../../public/checkMark.svg';
 import cross from '../../../public/crossMark.svg';
 import Image from 'next/image';
 import axios from 'axios';
-import type { Budget, Expense } from '@prisma/client';
+import type { Budget, Expense, User } from '@prisma/client';
 import { userStore } from '../store/store';
 import ClientLayout from '../ClientLayout';
 import { deleteExpense, fetchBudgetAmount, fetchExpense, validateAmountBudget, validateExpense } from 'src/utils/apiFunctions';
+import { ay } from 'node_modules/@fullcalendar/core/internal-common';
 
 export default function BudgetGlobal() {
   const [budgetAmount, setBudgetAmount] = useState<number>(0);
-  const [showInputbudgetAmount, setShowInputbudgetAmount] = useState(false);
-  const [showExpenseInput, setShowExpenseInput] = useState(false);
+  const [showInputbudgetAmount, setShowInputbudgetAmount] = useState<boolean>(false);
+  const [showExpenseInput, setShowExpenseInput] = useState<boolean>(false);
   const [reason, setReason] = useState<string>('');
   const [expense, setExpense] = useState<number>(0);
   const [expenses, setExpenses] = useState<{ reason: string; amount: number }[]>([]);
-  const userData = userStore.getState();
+  const userData: User = userStore.getState();
   const [displayTotal, setDisplayTotal] = useState<number>(0);
 
   // Ajout du montant du budget
   
-const handleValidateBudget = (e:any) => {
+const handleValidateBudget: (e: any) => void = (e) => {
   e.preventDefault();
   validateAmountBudget(budgetAmount,userData.email,setShowInputbudgetAmount,setBudgetAmount)
 }
   // Ajout d'une dépense
-  const handleValidateExpense = (e: any) => {
+  const handleValidateExpense: (e: any) => void  = (e) => {
     e.preventDefault();
     validateExpense(expense, reason, userData.email, setExpenses, setExpense, setReason, setShowExpenseInput);
   };
   
  // Supprimer une dépense
-  const handleDeleteExpense = (reason: string) => {   
+  const handleDeleteExpense:  (reason: string) => void  = (reason) => {   
     deleteExpense( reason,userData.email, setExpenses)
     
   }
 
   useEffect(() => {
-    const newTotalExpense = expenses.reduce((acc, curr) => acc + curr.amount, 0);
+    const newTotalExpense: number = expenses.reduce((acc, curr) => acc + curr.amount, 0);
     setDisplayTotal((budgetAmount || 0) - newTotalExpense);
   }, [budgetAmount, expenses]);
 

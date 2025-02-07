@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import ClientLayout from "../ClientLayout";
 import axios from "axios";
 import { userStore } from "../store/store";
-import { Meal } from "@prisma/client";
+import { Meal, User } from "@prisma/client";
 import { addMeal, deleteMeal, fetchMeal } from "src/utils/apiFunctions";
 
 // Définition du type pour les événements
@@ -19,7 +19,7 @@ interface FrontMeal  {
 }
 
 export default function MealPage() {
-  const userData = userStore.getState()
+  const userData: User = userStore.getState()
   const [showModalAddMeal, setShowModalAddMeal] = useState<boolean>(false);
   const [showModalDeleteMeal, setShowModalDeleteMeal] = useState<boolean>(false);
   const [mealName, setMealName] = useState<string>(""); 
@@ -29,36 +29,36 @@ export default function MealPage() {
   const [meals, setMeals] = useState<FrontMeal[]>([]); 
   const [selectedMeal, setSelectedMeal] = useState<any>(null); // Pour garder une référence à l'événement cliqué
 
-  const handleDateClick = (info: any) => {
+  const handleDateClick : (info:any)=> void = (info) => {
 
     
-    const selectedDate = info.date.toLocaleDateString('fr-CA'); // Extrait uniquement la date au format "YYYY-MM-DD"
+    const selectedDate: string = info.date.toLocaleDateString('fr-CA'); // Extrait uniquement la date au format "YYYY-MM-DD"
     setClickedDate(selectedDate); // Stocke la date cliquée
     setShowModalAddMeal(true); // Affiche la modal
   };
 
-  const handleAddMeal = () => {
+  const handleAddMeal: ()=> void = () => {
     addMeal (userData.email, mealName,clickedDate,setMealName, meals, setMeals, setShowModalAddMeal)
   }
 
-  const handleKeyDownValidate = (e: any) => {
+  const handleKeyDownValidate: (e:any) => void = (e) => {
     if (e.key === "Enter") {
       handleAddMeal();
     }
   };
 
-  const handleCancel = () => {  
+  const handleCancel: () => void = () => {  
     setShowModalDeleteMeal(false);
     setShowModalAddMeal(false)
   };
 
-  const handleMealClick = (clickInfo: any) => {
+  const handleMealClick: (clickInfo: any) => void = (clickInfo) => {
     setSelectedMeal(clickInfo); // Stocke l'événement cliqué dans selectedMeal
     setShowModalDeleteMeal(true); // Affiche la modal de suppression
   };
 
-  const handleDeleteMeal =  (mealTitle:string) => {
-    deleteMeal(userData, mealName, mealTitle, setMeals, setShowModalDeleteMeal,setSelectedMeal)
+  const handleDeleteMeal: (mealTitle:string) => void =  (mealTitle) => {
+    deleteMeal(userData.email, mealName, mealTitle, setMeals, setShowModalDeleteMeal,setSelectedMeal)
   }
   
   useEffect(() => {

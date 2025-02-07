@@ -12,13 +12,13 @@ import { handleSubmit } from 'src/utils/apiFunctions'
 
 export default function Login() {
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [errorMessage, setErrorMessage] = useState('');     
+    const [email, setEmail] = useState<string>('')
+    const [password, setPassword] = useState<string>('')
+    const [errorMessage, setErrorMessage] = useState<string>('');     
 
     const router = useRouter();
 
-    const handleSubmitLogin = (e: any) => {
+    const handleSubmitLogin: (e:any) => void = (e) => {
         e.preventDefault()
         handleSubmit(email, password)
         router.push('/home')

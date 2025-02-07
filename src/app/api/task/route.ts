@@ -1,12 +1,12 @@
 import { Prisma, PrismaClient, Task } from "@prisma/client";
 import { NextResponse } from "next/server";
 
-const prisma = new PrismaClient();
+const prisma: PrismaClient = new PrismaClient();
 
 export async function DELETE (req: Request){
     const body = await req.json();
 
-    const {taskName, email, nameConcerned} = body;
+    const {taskName, email, nameConcerned}: Task = body;
     console.log( email, nameConcerned, taskName );
     if(!email|| !taskName || !nameConcerned){
         return NextResponse.json(
@@ -15,7 +15,7 @@ export async function DELETE (req: Request){
         ) 
     }
     try {
-        const deleteTask = await prisma.task.deleteMany({
+        const deleteTask: {count:number} = await prisma.task.deleteMany({
             where: {
                 taskName: taskName,
                 nameConcerned: nameConcerned
@@ -41,9 +41,9 @@ export async function DELETE (req: Request){
 }
 export async function GET( req: Request) {
 
-    const {searchParams} = new URL (req.url);
-    const email = searchParams.get('email') as string
-    const nameConcerned = searchParams.get('nameConcerned') as string
+    const {searchParams}: URL = new URL (req.url);
+    const email: string = searchParams.get('email') as string
+    const nameConcerned: string = searchParams.get('nameConcerned') as string
 
     if(!email && !nameConcerned) {
         return NextResponse.json(
@@ -71,8 +71,8 @@ export async function GET( req: Request) {
 export async function POST(req:Request) {
     
     try {
-        const body = await req.json();
-        const {email, nameConcerned, taskName } = body
+        const body: Task = await req.json();
+        const {email, nameConcerned, taskName }: Task = body
         
         
         if (!nameConcerned || !email || !taskName ) {

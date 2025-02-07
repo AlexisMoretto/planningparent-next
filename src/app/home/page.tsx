@@ -13,8 +13,8 @@ import checkMark from "../../../public/checkMark.svg"
 export default function Home() {
 
   const router = useRouter();
-  const userData = userStore.getState()
-  const imageData = imgStore.getState()
+  const userData: User = userStore.getState()
+  const imageData: familyImage = imgStore.getState()
   const [showModal, setShowModal] = useState<boolean>(false)
   const [modalName, setModalName] = useState<string>('')
   const [taskName, setTaskName] = useState<string>('')

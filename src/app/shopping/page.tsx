@@ -1,7 +1,7 @@
 'use client'
 import { MouseEventHandler, useEffect, useState } from 'react'
 import './shopping.scss'
-import { Shopping } from '@prisma/client'
+import { Expense, Shopping, User } from '@prisma/client'
 import { userStore } from '../store/store'
 import axios from 'axios'
 import cross from 'public/crossMark.svg'
@@ -11,17 +11,10 @@ import { addItem, deleteArticle, fetchShoppingList } from 'src/utils/apiFunction
 
 export default function ShoppingListFunction () {
 
-    const userData = userStore.getState()
+    const userData: User = userStore.getState()
     const [name, setName] = useState<string>('')
     const [list, setList] = useState<{name:string}[]>([])
 
-    const handleKeyDownAddItem = (e: React.KeyboardEvent<HTMLInputElement>) => {
-
-        if(e.key === 'Enter') {
-            handleAddItem()
-        }
-    }
-    
  const handleAddItem = async () => {
     try {
        await addItem( userData.email,name)
@@ -33,20 +26,18 @@ export default function ShoppingListFunction () {
     
  }
     
-    const handleDeleteArticle = async (name:string) => {
+    const handleDeleteArticle: (name:string) =>void = async (name) => {
         try {
             await deleteArticle(name, userData.email)
             fetchShoppingList(userData.email, setList)
         } catch (error) {
             console.error("Erreur lors de la suppression de l'article :", error);
-        }
-        
-              
+        }  
     }
     
     useEffect( () => {    
             
-        fetchShoppingList(userData.email, setList)        
+        fetchShoppingList(userData.email, setList)
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[]);
     return(
@@ -62,7 +53,7 @@ export default function ShoppingListFunction () {
                 setName(e.currentTarget.value)
 
             }} 
-            onKeyDown={handleKeyDownAddItem}/>
+            />
             <button className='addShoppingItemButton' onClick={handleAddItem} >Ajouter</button>
         </div>
         <div className='shoppingList'>

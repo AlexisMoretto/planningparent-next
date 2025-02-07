@@ -9,13 +9,14 @@ import Login from './login/page';
 
 import { useState } from 'react';
 import { userStore } from './store/store';
+import { User } from '@prisma/client';
 
 
 
 export default function Main({children} : { children: React.ReactNode }) {
 
-  const [isLogged, setIsLogged] = useState(false)
-  const userData = userStore.getState() 
+  const [isLogged, setIsLogged] = useState<boolean>(false)
+  const userData :User  = userStore.getState() 
 
   const isLoggedIn = () => {
     if(userData.token){

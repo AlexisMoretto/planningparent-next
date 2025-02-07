@@ -1,12 +1,12 @@
 import { Budget, PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
-const prisma = new PrismaClient
+const prisma: PrismaClient = new PrismaClient()
 
 export async function GET (request: Request){
 
-    const {searchParams} = new URL(request.url);
-    const email = searchParams.get('email')
+    const {searchParams}: URL = new URL(request.url);
+    const email: string  | null = searchParams.get('email')
 
     if (!email) {
         return NextResponse.json(
@@ -18,7 +18,7 @@ export async function GET (request: Request){
         
         // On récupère le budget en fonction de l'email
 
-        const budget = await prisma.budget.findUnique({
+        const budget: Budget | null = await prisma.budget.findUnique({
             where: {
                 email:email
             }
@@ -40,9 +40,9 @@ export async function POST (req: NextRequest) {
 
     try {
         
-        const body = await req.json();
+        const body: Budget = await req.json();
 
-        const { email, budget}= body
+        const { email, budget}: Budget= body
 
         // Vérification des données requises pour l'envoi
 

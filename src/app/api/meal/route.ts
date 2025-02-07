@@ -1,12 +1,12 @@
 import { Meal,  PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
 
-const prisma = new PrismaClient;
+const prisma: PrismaClient = new PrismaClient;
 
 export async function DELETE(request:Request) {
 
-    const body = await request.json();
-    const {name, email} = body
+    const body: Meal = await request.json();
+    const {name, email}: Meal = body
 
     if (!email && !name) {
         console.log('email,name', email, name);
@@ -18,7 +18,7 @@ export async function DELETE(request:Request) {
     }
     try {
 
-        const deleteExpense = await prisma.meal.deleteMany({
+        const deleteExpense: {count:number} = await prisma.meal.deleteMany({
             where: {
                 name,
                 email:email,
@@ -41,8 +41,8 @@ export async function DELETE(request:Request) {
 }
 export async function GET(req: Request) {
 
-    const {searchParams} = new URL(req.url);
-    const email = searchParams.get('email')
+    const {searchParams}: URL = new URL(req.url);
+    const email: string = searchParams.get('email') as string
 
     if(!email) {
         return NextResponse.json(
@@ -51,7 +51,7 @@ export async function GET(req: Request) {
         )
     }
     try {
-        const meals = await prisma.meal.findMany({
+        const meals: Meal[] = await prisma.meal.findMany({
             where:{
                 email:email
             }
@@ -71,9 +71,9 @@ export async function GET(req: Request) {
 export async function POST(req:Request) {
     try {
 
-        const body = await req.json();
+        const body : Meal= await req.json();
 
-        const {name, mealDate, email }= body
+        const {name, mealDate, email } : Meal= body
         console.log("Body reçu dans la requête :", body);
 
         if(!name||!email||!mealDate) {
@@ -86,7 +86,7 @@ export async function POST(req:Request) {
             
         }
 
-        const newMeal = await prisma.meal.create({
+        const newMeal: Meal = await prisma.meal.create({
             data: {
                 name, 
                 mealDate: new Date(mealDate),
