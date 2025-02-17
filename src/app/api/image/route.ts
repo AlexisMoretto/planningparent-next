@@ -5,11 +5,11 @@ import { userStore } from "src/app/store/store";
 
 const prisma : PrismaClient= new PrismaClient()
 
-export async function GET(request: Request) {
+export async function GET(req: Request) {
 
     // On viens chercher dans l'url l'email envoyé en param par le front 
     // searchParams est une propriété de l'objet URL. Elle permet d'extraire les paramètres présent dans l'url de la requete (après le ?) car le front envoi les paramètres dans l'url
-    const { searchParams }: URL = new URL(request.url);
+    const { searchParams }: URL = new URL(req.url);
 
     // On peut donc récupérer l'eamil via la méthode .get 
     const email: string = searchParams.get('email') as string; 
@@ -86,24 +86,31 @@ export async function POST(req: Request) {
 export async function DELETE (req:Request) {
 
   const body: familyImage = await req.json();
-  const {email, name, base64}: familyImage = body;
+  const {name, email}: familyImage = body
 
-  if(!email || !name || !base64) {
 
-    console.log('email, name, ppImg:', email, name, base64)
+  
+  if(!email || !name) {
+
+    console.log("❌ Paramètres manquants :", { email, name });
       return NextResponse.json("Element manquant pour la suppression")
+  } else {
+    console.log("Données reçu", email, name,);
+    
   }
 
   try {
       const deletePeople: {count:number}= await prisma.familyImage.deleteMany ({
           where: {
-            name:name,
             email:email,
-            base64:base64
+            name:name,
+            
           }
 
       })
-      return NextResponse.json(deletePeople)
+      console.log("✅ Suppression réussie :", deletePeople.count);
+      return NextResponse.json({message:'✅ Suppression réussie '},
+      )
   } catch (error) {
       return NextResponse.json(
           {message: "Erreur lors de la suppression coté back"},

@@ -10,6 +10,8 @@ import Login from './login/page';
 import { useState } from 'react';
 import { userStore } from './store/store';
 import { User } from '@prisma/client';
+import { Provider } from 'react-redux';
+import store from './store/store'
 
 
 
@@ -26,7 +28,7 @@ export default function Main({children} : { children: React.ReactNode }) {
  
 
   return (
-    
+    <Provider store={store}>
     <div>      
         
         <Register />        
@@ -44,5 +46,6 @@ export default function Main({children} : { children: React.ReactNode }) {
         
         
     </div>
+    </Provider>
   );
 }

@@ -1,4 +1,4 @@
-import { Budget, Meal, Event, Shopping, User, Expense } from "@prisma/client";
+import { Budget, Meal, Event, Shopping, User, Expense, familyImage } from "@prisma/client";
 import axios from "axios";
 import router from "next/router";
 import { SetStateAction } from "react";
@@ -508,3 +508,35 @@ export const addItem: (
         
         
     }
+
+    // ---------------------- HOME ------------------------------
+
+    export const deletePeople: (
+      email:string,
+      name:string,
+      setDeletePeopleModal: (value: boolean) => void,
+
+    ) => void = async (
+      email,
+      name,
+    
+      setDeletePeopleModal,
+    ) => {    
+        try {
+          console.log("🛠️ Envoi de la requête DELETE avec :", { email, name });
+          const response: {data:familyImage} = await axios.delete("/api/image", {
+            data: {
+              email,
+              name:name,
+            
+            }
+            
+          })
+          console.log("✅ Suppression réussie :", response.data);
+          setDeletePeopleModal(false)
+          
+          
+        } catch (error) {
+          console.error("Erreur lors de la suppression de la personnne")
+        }
+      }

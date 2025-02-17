@@ -1,9 +1,10 @@
 import { User } from "@prisma/client";
 import { ACTIONS } from "../@types";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 
 
-const userInitialState: User = {
+const initialState: User = {
   name: '',
     password: '',
     email: '',
@@ -12,7 +13,7 @@ const userInitialState: User = {
     token: ''
   };  
 
-const userReducer = (state = userInitialState, action: {
+export const userReducer = (state = initialState, action: {
   type: ACTIONS;
   payload: {
     name: string;
@@ -35,4 +36,28 @@ const userReducer = (state = userInitialState, action: {
       // La valeur que le reducer return est automatiquement placé dans le state du store      
     return state;
   }
-export default userReducer
+
+
+
+export const userSlice = createSlice({
+  name: "user",
+  initialState,
+  reducers: {
+    setUserData: (state,  action: PayloadAction<User>) => {
+      const userDataSet = action.payload
+
+      if (userDataSet) {
+        state.email = userDataSet.email,
+      state.firstName= userDataSet.firstName,
+      state.id= userDataSet.id,
+      state.name = userDataSet.name,
+      state.password= userDataSet.password,
+      state.token= userDataSet.token
+      }
+      
+    }
+    
+  }
+})
+export const {setUserData} = userSlice.actions
+export default userSlice.reducer

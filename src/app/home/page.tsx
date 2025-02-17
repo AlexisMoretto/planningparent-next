@@ -10,6 +10,8 @@ import { Event, familyImage, Task, User } from '@prisma/client';
 import ClientLayout from '../ClientLayout';
 import Image from 'next/image';
 import checkMark from "../../../public/checkMark.svg"
+import { deletePeople } from 'src/utils/apiFunctions';
+import { profile } from 'console';
 export default function Home() {
 
   const router = useRouter();
@@ -23,7 +25,7 @@ export default function Home() {
   const [event, setEvent] = useState<Event[]>()
   const [people, setPeople] = useState<familyImage[]>()
   const [deletePeopleModal, setDeletePeopleModal] = useState<boolean>()
-  const [ppImg, setPpimg] = useState<string>('')
+  const [base64, setBase64] = useState<string>('')
   
 
   const verifyoken = async (token: any) => {
@@ -148,25 +150,17 @@ export default function Home() {
   useEffect(() => {
     fetchImages()
   },[])
-  const deletePeople = async () => {    
+  const handleDeletePeople: () => void = async () => {
+    console.log("Suppression lancé")
+    console.log('Nom de la modal',modalName);
+    
     try {
-      const response = await axios.delete("/api/image", {
-        data: {
-          email:userData.email,
-          name:modalName,
-          ppImg:ppImg,
-
-        }
-        
-      })
-      console.log('deletedTask',response.data.message)
-      setDeletePeopleModal(false)
-      fetchImages()
-      
+        console.log("Suppression de :", userData.email, modalName);
+         deletePeople(userData.email,modalName, setDeletePeopleModal);
     } catch (error) {
-      console.error("Erreur lors de la suppression de la personnne")
+        console.error("Erreur dans handleDeletePeople :", error);
     }
-  }
+};
   const goToAddMember = () => {
     router.push('addMember')
   }
@@ -186,7 +180,7 @@ export default function Home() {
             people.map((profil, index) => (
           <div key={index} className="memberCard">
             <button className='imgButton' onClick={() => {setModalName(profil.firstName)
-              setPpimg(profil.base64)
+              setBase64(profil.base64)
             }} ><img className='peopleImage' src={profil.base64} alt={profil.firstName} onClick={ () => {setShowModal(true)}} /></button>
             <p>{profil.firstName} {profil.name}</p>
       </div>
@@ -253,11 +247,13 @@ export default function Home() {
           </div>
         </div>
         <div className='deletePeople'>
-          <button className='deletePeopleButton' onClick={()=> setDeletePeopleModal(true)}>Supprimer de la famille</button>
+          <button className='deletePeopleButton' onClick={()=> {setDeletePeopleModal(true)
+            setModalName(modalName)}
+          }>Supprimer de la famille</button>
           {deletePeopleModal && (
             <div className='deletePeopleModal'>
               <p>Etes vous sur de vouloir supprimer cette personne</p>
-              <button onClick={deletePeople}>Oui</button>
+              <button onClick={handleDeletePeople}>Oui</button>
               <button onClick={() =>setDeletePeopleModal(false)}>Annuler</button>
             </div>
           )}
